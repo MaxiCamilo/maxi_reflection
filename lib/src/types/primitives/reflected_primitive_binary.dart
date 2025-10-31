@@ -19,7 +19,7 @@ class ReflectedPrimitiveBinary implements ReflectedType {
   bool get acceptsNull => false;
 
   @override
-  Result createNewInstance() => ResultValue(content: _empty);
+  Result createNewInstance({ReflectionManager? manager}) => ResultValue(content: _empty);
 
   @override
   bool get hasDefaultValue => true;
@@ -37,13 +37,13 @@ class ReflectedPrimitiveBinary implements ReflectedType {
   bool isTypeCompatible({required Type type}) => type == Uint8List;
 
   @override
-  bool thisTypeCanConvert({required Type type}) => const [Uint8List, String, List<int>].contains(type);
+  bool thisTypeCanConvert({required Type type, ReflectionManager? manager}) => const [Uint8List, String, List<int>].contains(type);
 
   @override
-  bool thisObjectCanConvert({required rawValue}) => rawValue != null && thisTypeCanConvert(type: rawValue.runtimeType);
+  bool thisObjectCanConvert({required rawValue, ReflectionManager? manager}) => rawValue != null && thisTypeCanConvert(type: rawValue.runtimeType);
 
   @override
-  Result serialize({required value}) {
+  Result serialize({required value, ReflectionManager? manager}) {
     if (value is Uint8List) {
       return ResultValue(content: value);
     } else {
@@ -52,7 +52,7 @@ class ReflectedPrimitiveBinary implements ReflectedType {
   }
 
   @override
-  Result convertOrClone({required rawValue}) {
+  Result convertOrClone({required rawValue, ReflectionManager? manager}) {
     if (rawValue == null) {
       return NegativeResult.controller(
         code: ErrorCode.nullValue,

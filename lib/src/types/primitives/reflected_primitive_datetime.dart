@@ -30,18 +30,18 @@ class ReflectedPrimitiveDatetime implements ReflectedType {
   bool isTypeCompatible({required Type type}) => type == String;
 
   @override
-  bool thisTypeCanConvert({required Type type}) => const [DateTime, int, String, double, num].contains(type);
+  bool thisTypeCanConvert({required Type type, ReflectionManager? manager}) => const [DateTime, int, String, double, num].contains(type);
 
   @override
-  bool thisObjectCanConvert({required rawValue}) => rawValue != null && thisTypeCanConvert( type: rawValue.runtimeType);
+  bool thisObjectCanConvert({required rawValue, ReflectionManager? manager}) => rawValue != null && thisTypeCanConvert( type: rawValue.runtimeType);
 
   @override
-  Result createNewInstance() {
+  Result createNewInstance({ReflectionManager? manager}) {
     return ResultValue(content: _initial);
   }
 
   @override
-  Result convertOrClone({required rawValue, bool isLocal = true}) {
+  Result convertOrClone({required rawValue, bool isLocal = true, ReflectionManager? manager}) {
     if (rawValue == null) {
       return NegativeResult.controller(
         code: ErrorCode.nullValue,
@@ -86,7 +86,7 @@ class ReflectedPrimitiveDatetime implements ReflectedType {
   }
 
   @override
-  Result serialize({required value}) {
+  Result serialize({required value, ReflectionManager? manager}) {
     if (value is DateTime) {
       return ResultValue(content: value.toUtc().millisecondsSinceEpoch);
     } else {

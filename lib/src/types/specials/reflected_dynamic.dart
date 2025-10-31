@@ -20,10 +20,7 @@ class ReflectedDynamic implements ReflectedType {
   String get name => 'Dynamic';
 
   @override
-  Result createNewInstance() => voidResult;
-
-  @override
-  Result convertOrClone({required rawValue}) => ResultValue(content: rawValue);
+  Result createNewInstance({ReflectionManager? manager}) => voidResult;
 
   @override
   bool isObjectCompatible({required value}) => true;
@@ -35,11 +32,36 @@ class ReflectedDynamic implements ReflectedType {
   bool isTypeCompatible({required Type type}) => true;
 
   @override
-  Result serialize({required value}) => ResultValue(content: value);
+  bool thisObjectCanConvert({required rawValue, ReflectionManager? manager}) => true;
 
   @override
-  bool thisObjectCanConvert({required rawValue}) => true;
+  bool thisTypeCanConvert({required Type type, ReflectionManager? manager}) => true;
 
   @override
-  bool thisTypeCanConvert({required Type type}) => true;
+  Result serialize({required value, ReflectionManager? manager}) {
+    final reflector = GetDynamicReflectorByType(dartType: value.runtimeType, reflectionManager: manager).execute();
+    if (reflector.itsFailure) return reflector.cast();
+    if (reflector.content.reflectionMode == ReflectedTypeMode.unkown) {
+      return NegativeResult.controller(
+        code: ErrorCode.wrongType,
+        message: FlexibleOration(message: 'The reflector of type %1 was not found', textParts: [value.runtimeType]),
+      );
+    }
+
+    return reflector.content.serialize(value: value);
+  }
+
+  @override
+  Result convertOrClone({required rawValue, ReflectionManager? manager}) {
+    final reflector = GetDynamicReflectorByType(dartType: rawValue.runtimeType, reflectionManager: manager).execute();
+    if (reflector.itsFailure) return reflector.cast();
+    if (reflector.content.reflectionMode == ReflectedTypeMode.unkown) {
+      return NegativeResult.controller(
+        code: ErrorCode.wrongType,
+        message: FlexibleOration(message: 'The reflector of type %1 was not found', textParts: [rawValue.runtimeType]),
+      );
+    }
+
+    return reflector.content.convertOrClone(rawValue: rawValue, manager: manager);
+  }
 }

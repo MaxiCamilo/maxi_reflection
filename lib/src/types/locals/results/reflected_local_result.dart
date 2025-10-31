@@ -35,7 +35,7 @@ class ReflectedLocalResult<T> implements ReflectedType {
   ReflectedTypeMode get reflectionMode => ReflectedTypeMode.maxiClass;
 
   @override
-  Result createNewInstance() {
+  Result createNewInstance({ReflectionManager? manager}) {
     if (isVoidResult) {
       return ResultValue(content: voidResult);
     } else {
@@ -53,13 +53,14 @@ class ReflectedLocalResult<T> implements ReflectedType {
   bool isTypeCompatible({required Type type}) => type == Result<T>;
 
   @override
-  bool thisTypeCanConvert({required Type type}) => [ResultValue<T>, T, NegativeResult<T>, ExceptionResult<T>, CancelationResult<T>, ErrorData, ControlledFailure, InvalidProperty, Map<String, dynamic>].contains(type);
+  bool thisTypeCanConvert({required Type type, ReflectionManager? manager}) =>
+      [ResultValue<T>, T, NegativeResult<T>, ExceptionResult<T>, CancelationResult<T>, ErrorData, ControlledFailure, InvalidProperty, Map<String, dynamic>].contains(type);
 
   @override
-  bool thisObjectCanConvert({required rawValue}) => (rawValue == null && isVoidResult) || (rawValue != null && thisTypeCanConvert(type: rawValue.runtimeType));
+  bool thisObjectCanConvert({required rawValue, ReflectionManager? manager}) => (rawValue == null && isVoidResult) || (rawValue != null && thisTypeCanConvert(type: rawValue.runtimeType));
 
   @override
-  Result serialize({required value}) {
+  Result serialize({required value, ReflectionManager? manager}) {
     if (isVoidResult && (value == null || value == voidResult)) {
       return ResultValue(content: {ReflectedType.prefixType: typeSerialization, _isOkProperty: true, _contentTypeProperty: 'void', _contentProperty: ''});
     }
@@ -71,7 +72,7 @@ class ReflectedLocalResult<T> implements ReflectedType {
       );
     }
 
-    final isOk = (value is Result) ? (value.itsCorrect) : true;
+    final isOk = (value is Result) ? (value.itsCorrect) : (value is! ErrorData);
     final rawContent = (value is Result) ? (value.itsCorrect ? value.content : value.error) : value;
 
     final contentFormated = _serializeValue(value: rawContent);
@@ -102,7 +103,7 @@ class ReflectedLocalResult<T> implements ReflectedType {
   }
 
   @override
-  Result<Result<T>> convertOrClone({required rawValue}) {
+  Result<Result<T>> convertOrClone({required rawValue, ReflectionManager? manager}) {
     if (rawValue == null) {
       if (isVoidResult) {
         return ResultValue(content: voidResult as Result<T>);

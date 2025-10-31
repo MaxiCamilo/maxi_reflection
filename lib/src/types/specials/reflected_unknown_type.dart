@@ -29,25 +29,25 @@ class ReflectedUnknownType implements ReflectedType {
   bool isTypeCompatible({required Type type}) => type == dartType;
 
   @override
-  bool thisObjectCanConvert({required rawValue}) => false;
+  bool thisObjectCanConvert({required rawValue, ReflectionManager? manager}) => false;
 
   @override
-  bool thisTypeCanConvert({required Type type}) => false;
+  bool thisTypeCanConvert({required Type type, ReflectionManager? manager}) => false;
 
   @override
-  Result createNewInstance() => NegativeResult.controller(
+  Result createNewInstance({ReflectionManager? manager}) => NegativeResult.controller(
     code: ErrorCode.implementationFailure,
     message: FlexibleOration(message: 'It\'s not possible to create a new instance of %1, because it was not reflected', textParts: [dartType]),
   );
 
   @override
-  Result serialize({required value}) => NegativeResult.controller(
+  Result serialize({required value, ReflectionManager? manager}) => NegativeResult.controller(
     code: ErrorCode.implementationFailure,
     message: FlexibleOration(message: 'It\'s not possible to serialize the value of type %1, because it wasn\'t reflected', textParts: [dartType]),
   );
 
   @override
-  Result convertOrClone({required rawValue}) => NegativeResult.controller(
+  Result convertOrClone({required rawValue, ReflectionManager? manager}) => NegativeResult.controller(
     code: ErrorCode.implementationFailure,
     message: FlexibleOration(message: 'It\'s not possible to convert or clone the value of type %1, because it wasn\'t reflected', textParts: [dartType]),
   );

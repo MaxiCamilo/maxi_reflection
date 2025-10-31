@@ -19,10 +19,6 @@ class GetDynamicReflectorByName implements SyncFunctionality<ReflectedType> {
       return ResultValue(content: ReflectedVoid(anotations: anotations));
     }
 
-    final primitive = GetPrimitiveReflectorByName(name: typeName, anotations: anotations).execute();
-    if (primitive.itsFailure) return primitive.cast();
-    if (primitive.content != null) return ResultValue(content: primitive.content!);
-
     if (typeName.last == '?') {
       final realType = GetDynamicReflectorByName(typeName: typeName.removeLastCharacters(1), reflectionManager: reflectionManager, anotations: anotations).execute();
       if (realType.itsFailure) return realType.cast();
@@ -32,22 +28,18 @@ class GetDynamicReflectorByName implements SyncFunctionality<ReflectedType> {
       );
     }
 
+    final primitive = GetPrimitiveReflectorByName(name: typeName, anotations: anotations).execute();
+    if (primitive.itsFailure) return primitive.cast();
+    if (primitive.content != null) return ResultValue(content: primitive.content!);
+
     final local = GetLocalReflectorByName(name: typeName, anotations: anotations).execute();
     if (local.itsFailure) return primitive.cast();
     if (local.content != null) return ResultValue(content: local.content!);
 
     if (reflectionManager != null) {
-      for (final refleEnum in reflectionManager!.reflectedEnums) {
-        if (refleEnum.name == typeName) {
-          return ResultValue(content: refleEnum);
-        }
-      }
-
-      for (final refleType in reflectionManager!.reflectedTypes) {
-        if (refleType.name == typeName) {
-          return ResultValue(content: refleType);
-        }
-      }
+      final reflec = reflectionManager!.trySearchTypeByName(typeName);
+      if (reflec.itsFailure) return reflec.cast();
+      if (reflec.content != null) return ResultValue(content: reflec.content!);
     }
 
     return ResultValue(

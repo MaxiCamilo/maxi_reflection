@@ -14,7 +14,7 @@ class ReflectedPrimitiveInt implements ReflectedType {
   bool get acceptsNull => false;
 
   @override
-  Result createNewInstance() => ResultValue(content: 0);
+  Result createNewInstance({ReflectionManager? manager}) => ResultValue(content: 0);
 
   @override
   bool get hasDefaultValue => true;
@@ -32,9 +32,9 @@ class ReflectedPrimitiveInt implements ReflectedType {
   bool isTypeCompatible({required Type type}) => type == int;
 
   @override
-  bool thisTypeCanConvert({required Type type}) => const [int, double, num, String, bool, DateTime, Enum].contains(type);
+  bool thisTypeCanConvert({required Type type, ReflectionManager? manager}) => const [int, double, num, String, bool, DateTime, Enum].contains(type);
   @override
-  bool thisObjectCanConvert({required rawValue}) {
+  bool thisObjectCanConvert({required rawValue, ReflectionManager? manager}) {
     if (rawValue == null) {
       return false;
     }
@@ -46,16 +46,16 @@ class ReflectedPrimitiveInt implements ReflectedType {
   }
 
   @override
-  Result serialize({required value}) {
+  Result serialize({required value, ReflectionManager? manager}) {
     if (value is int) {
       return ResultValue(content: value);
     } else {
-      return convertOrClone(rawValue: value, ifEmptyIsZero: true);
+      return convertOrClone(rawValue: value, ifEmptyIsZero: true,manager: manager);
     }
   }
 
   @override
-  Result convertOrClone({required rawValue, bool ifEmptyIsZero = false}) {
+  Result convertOrClone({required rawValue, bool ifEmptyIsZero = false, ReflectionManager? manager}) {
     if (rawValue == null) {
       return NegativeResult.controller(
         code: ErrorCode.nullValue,

@@ -32,13 +32,13 @@ class ReflectedLocalControlledFailure implements ReflectedType {
   bool isObjectCompatible({required value}) => value is ControlledFailure;
 
   @override
-  bool thisTypeCanConvert({required Type type}) => const [ControlledFailure, InvalidProperty, ErrorData, Map<String, dynamic>].contains(type);
+  bool thisTypeCanConvert({required Type type, ReflectionManager? manager}) => const [ControlledFailure, InvalidProperty, ErrorData, Map<String, dynamic>].contains(type);
 
   @override
-  bool thisObjectCanConvert({required rawValue}) => rawValue != null && (rawValue is ErrorData || rawValue is Map<String, dynamic>);
+  bool thisObjectCanConvert({required rawValue, ReflectionManager? manager}) => rawValue != null && (rawValue is ErrorData || rawValue is Map<String, dynamic>);
 
   @override
-  Result createNewInstance() {
+  Result createNewInstance({ReflectionManager? manager}) {
     return NegativeResult.controller(
       code: ErrorCode.implementationFailure,
       message: const FixedOration(message: 'Cannot create error instance without message'),
@@ -46,7 +46,7 @@ class ReflectedLocalControlledFailure implements ReflectedType {
   }
 
   @override
-  Result convertOrClone({required rawValue}) {
+  Result convertOrClone({required rawValue, ReflectionManager? manager}) {
     if (rawValue == null) {
       return NegativeResult.controller(
         code: ErrorCode.nullValue,
@@ -82,7 +82,7 @@ class ReflectedLocalControlledFailure implements ReflectedType {
   }
 
   @override
-  Result serialize({required value}) {
+  Result serialize({required value, ReflectionManager? manager}) {
     if (value is ErrorData) {
       return ResultValue(
         content: <String, dynamic>{

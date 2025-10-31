@@ -4,6 +4,7 @@ import 'package:maxi_reflection/maxi_reflection.dart';
 abstract interface class ReflectedClass implements ReflectedType {
   bool get isConstClass;
   bool get isInterface;
+  String get packagePrefix;
 
   List<ReflectedMethod> get methods;
   List<ReflectedField> get fields;

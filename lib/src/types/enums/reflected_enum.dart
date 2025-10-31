@@ -22,31 +22,31 @@ class ReflectedEnum implements ReflectedType {
   bool get hasDefaultValue => true;
 
   @override
-  Result createNewInstance() => ResultValue(content: options.first.value);
+  Result createNewInstance({ReflectionManager? manager}) => ResultValue(content: options.first.value);
   @override
-  bool thisTypeCanConvert({required Type type}) => type == dartType || const [Enum, int, String].contains(type);
+  bool thisTypeCanConvert({required Type type, ReflectionManager? manager}) => type == dartType || const [Enum, int, String].contains(type);
 
   @override
-  bool thisObjectCanConvert({required rawValue}) => rawValue != null && (rawValue is Enum || isTypeCompatible(type: rawValue.runtimeType));
+  bool thisObjectCanConvert({required rawValue, ReflectionManager? manager}) => rawValue != null && (rawValue is Enum || isTypeCompatible(type: rawValue.runtimeType));
 
   @override
-  bool isObjectCompatible({required value}) => options.any((x) => x.value == value);
+  bool isObjectCompatible({required value}) => value.runtimeType == dartType || options.any((x) => x.value == value);
 
   @override
-  bool isTypeCompatible({required Type type}) => options.any((x) => x.value.runtimeType == type);
+  bool isTypeCompatible({required Type type}) => type == dartType || options.any((x) => x.value.runtimeType == type);
 
   @override
   String get name => dartType.toString();
 
   @override
-  Result serialize({required value}) {
-    final result = convertOrClone( rawValue: value);
+  Result serialize({required value, ReflectionManager? manager}) {
+    final result = convertOrClone(rawValue: value);
     if (result.itsFailure) return result;
     return ResultValue(content: (result.content as Enum).index);
   }
 
   @override
-  Result convertOrClone({required rawValue}) {
+  Result convertOrClone({required rawValue, ReflectionManager? manager}) {
     if (rawValue == null) {
       return NegativeResult.controller(
         code: ErrorCode.nullValue,

@@ -24,3 +24,6 @@ export 'package:maxi_reflection/src/types/locals/errors/reflected_local_controll
 export 'package:maxi_reflection/src/types/locals/errors/reflected_local_invalid_property.dart';
 
 export 'package:maxi_reflection/src/types/locals/results/reflected_local_result.dart';
+export 'package:maxi_reflection/src/types/locals/results/reflected_local_dynamic_result.dart';
+
+export 'package:maxi_reflection/src/types/list/reflected_typed_list.dart';

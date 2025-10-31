@@ -4,9 +4,10 @@ import 'package:maxi_reflection/maxi_reflection_ext.dart';
 
 class GetLocalReflector implements SyncFunctionality<ReflectedType?> {
   final Type dartType;
+  final ReflectionManager? manager;
   final List anotations;
 
-  const GetLocalReflector({required this.dartType, this.anotations = const []});
+  const GetLocalReflector({required this.dartType, this.manager, this.anotations = const []});
 
   @override
   Result<ReflectedType?> execute() {
@@ -37,16 +38,16 @@ class GetLocalReflector implements SyncFunctionality<ReflectedType?> {
     }
 
     //////////////////////////
-    
-    if (dartType == Result) {
-      return ResultValue(content: ReflectedLocalErrorData(anotations: anotations));
+
+    if (dartType == Result || dartType.toString() == 'Result' || dartType.toString().startsWith('Result<')) {
+      return ResultValue(content: ReflectedLocalDynamicResult(anotations: anotations));
     }
 
     //////////////////////////
 
     if (dartType.toString().last == '?') {
       final realTypeName = dartType.toString().removeLastCharacters(1);
-      final searchByName = GetLocalReflectorByName(name: realTypeName, anotations: anotations).execute();
+      final searchByName = GetLocalReflectorByName(name: realTypeName, anotations: anotations, manager: manager).execute();
       if (searchByName.itsFailure || searchByName.content == null) return searchByName;
       return ResultValue(
         content: ReflectedNullable(dartType: dartType, anotations: anotations, reflectedType: searchByName.content!),

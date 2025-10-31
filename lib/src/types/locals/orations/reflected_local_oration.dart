@@ -26,7 +26,7 @@ class ReflectedLocalOration implements ReflectedType {
   ReflectedTypeMode get reflectionMode => ReflectedTypeMode.maxiClass;
 
   @override
-  Result createNewInstance() => ResultValue(content: const FixedOration(message: ''));
+  Result createNewInstance({ReflectionManager? manager}) => ResultValue(content: const FixedOration(message: ''));
 
   @override
   bool isObjectCompatible({required value}) => value is Oration;
@@ -35,13 +35,13 @@ class ReflectedLocalOration implements ReflectedType {
   bool isTypeCompatible({required Type type}) => type == Oration || type == FlexibleOration || type == FixedOration;
 
   @override
-  bool thisTypeCanConvert({required Type type}) => const [FixedOration, FlexibleOration, Oration, Map<String, dynamic>].contains(type);
+  bool thisTypeCanConvert({required Type type, ReflectionManager? manager}) => const [FixedOration, FlexibleOration, Oration, Map<String, dynamic>].contains(type);
 
   @override
-  bool thisObjectCanConvert({required rawValue}) => rawValue != null && (rawValue is Oration || thisTypeCanConvert(type: rawValue.runtimeType));
+  bool thisObjectCanConvert({required rawValue, ReflectionManager? manager}) => rawValue != null && (rawValue is Oration || thisTypeCanConvert(type: rawValue.runtimeType));
 
   @override
-  Result serialize({required value}) {
+  Result serialize({required value, ReflectionManager? manager}) {
     if (value! is Oration) {
       final convertedValue = convertOrClone(rawValue: value);
       if (convertedValue.itsFailure) return convertedValue;
@@ -57,7 +57,7 @@ class ReflectedLocalOration implements ReflectedType {
   }
 
   @override
-  Result convertOrClone({required rawValue}) {
+  Result convertOrClone({required rawValue, ReflectionManager? manager}) {
     if (rawValue == null) {
       return NegativeResult.controller(
         code: ErrorCode.nullValue,

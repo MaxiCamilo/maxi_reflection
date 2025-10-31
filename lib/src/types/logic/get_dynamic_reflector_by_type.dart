@@ -21,10 +21,6 @@ class GetDynamicReflectorByType implements SyncFunctionality<ReflectedType> {
       return ResultValue(content: ReflectedVoid(anotations: anotations));
     }
 
-    final primitive = GetPrimitiveReflector(dartType: dartType).execute();
-    if (primitive.itsFailure) return primitive.cast();
-    if (primitive.content != null) return ResultValue(content: primitive.content!);
-
     if (name.last == '?') {
       final realType = GetDynamicReflectorByName(typeName: name.removeLastCharacters(1), reflectionManager: reflectionManager, anotations: anotations).execute();
       if (realType.itsFailure) return realType.cast();
@@ -34,31 +30,22 @@ class GetDynamicReflectorByType implements SyncFunctionality<ReflectedType> {
       );
     }
 
-    final local = GetLocalReflector(dartType: dartType, anotations: anotations).execute();
+    final primitive = GetPrimitiveReflector(dartType: dartType).execute();
+    if (primitive.itsFailure) return primitive.cast();
+    if (primitive.content != null) return ResultValue(content: primitive.content!);
+
+    final local = GetLocalReflector(dartType: dartType, anotations: anotations, manager: reflectionManager).execute();
     if (local.itsFailure) return primitive.cast();
     if (local.content != null) return ResultValue(content: local.content!);
 
     if (reflectionManager != null) {
-      for (final refleEnum in reflectionManager!.reflectedEnums) {
-        if (refleEnum.isTypeCompatible(type: dartType)) {
-          return ResultValue(content: refleEnum);
-        }
-      }
-
-      for (final refleType in reflectionManager!.reflectedTypes) {
-        if (refleType.isTypeCompatible(type: dartType)) {
-          return ResultValue(content: refleType);
-        }
-      }
+      final reflec = reflectionManager!.trySearchTypeByType(dartType);
+      if (reflec.itsFailure) return reflec.cast();
+      if (reflec.content != null) return ResultValue(content: reflec.content!);
     }
 
     return ResultValue(
       content: ReflectedUnknownType(dartType: dartType, anotations: anotations),
     );
-    /*
-    return NegativeResult.controller(
-      code: ErrorCode.implementationFailure,
-      message: FlexibleOration(message: 'No reflector found for type %1', textParts: [dartType]),
-    );*/
   }
 }

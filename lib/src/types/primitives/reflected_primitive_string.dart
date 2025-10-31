@@ -15,7 +15,7 @@ class ReflectedPrimitiveString implements ReflectedType {
   bool get acceptsNull => false;
 
   @override
-  Result  createNewInstance() => ResultValue(content: '');
+  Result createNewInstance({ReflectionManager? manager}) => ResultValue(content: '');
 
   @override
   bool get hasDefaultValue => true;
@@ -27,27 +27,27 @@ class ReflectedPrimitiveString implements ReflectedType {
   ReflectedTypeMode get reflectionMode => ReflectedTypeMode.primitive;
 
   @override
-  bool isObjectCompatible({ required value}) => value is String;
+  bool isObjectCompatible({required value}) => value is String;
 
   @override
-  bool isTypeCompatible({ required Type type}) => type == String;
+  bool isTypeCompatible({required Type type}) => type == String;
 
   @override
-  bool thisTypeCanConvert({ required Type type}) => true;
+  bool thisTypeCanConvert({required Type type, ReflectionManager? manager}) => true;
   @override
-  bool thisObjectCanConvert({  required rawValue}) => rawValue != null;
+  bool thisObjectCanConvert({required rawValue, ReflectionManager? manager}) => rawValue != null;
 
   @override
-  Result serialize({ required value}) {
+  Result serialize({required value, ReflectionManager? manager}) {
     if (value is String) {
       return ResultValue(content: value);
     } else {
-      return convertOrClone(rawValue: value );
+      return convertOrClone(rawValue: value, manager: manager);
     }
   }
 
   @override
-  Result convertOrClone({required rawValue}) {
+  Result convertOrClone({required rawValue, ReflectionManager? manager}) {
     if (rawValue == null) {
       return NegativeResult.controller(
         code: ErrorCode.nullValue,

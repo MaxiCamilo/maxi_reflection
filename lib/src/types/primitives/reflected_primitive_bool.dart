@@ -14,7 +14,7 @@ class ReflectedPrimitiveBool implements ReflectedType {
   bool get acceptsNull => false;
 
   @override
-  Result createNewInstance() => ResultValue(content: false);
+  Result createNewInstance({ReflectionManager? manager}) => ResultValue(content: false);
 
   @override
   bool get hasDefaultValue => true;
@@ -32,13 +32,13 @@ class ReflectedPrimitiveBool implements ReflectedType {
   bool isTypeCompatible({required Type type}) => type == bool;
 
   @override
-  bool thisTypeCanConvert({required Type type}) => const [bool, String, int, double, num].contains(type);
+  bool thisTypeCanConvert({required Type type, ReflectionManager? manager}) => const [bool, String, int, double, num].contains(type);
 
   @override
-  bool thisObjectCanConvert({required rawValue}) => rawValue != null && thisTypeCanConvert(type: rawValue.runtimeType);
+  bool thisObjectCanConvert({required rawValue, ReflectionManager? manager}) => rawValue != null && thisTypeCanConvert(type: rawValue.runtimeType);
 
   @override
-  Result convertOrClone({required rawValue}) {
+  Result convertOrClone({required rawValue, ReflectionManager? manager}) {
     if (rawValue == null) {
       return NegativeResult.controller(
         code: ErrorCode.nullValue,
@@ -89,7 +89,7 @@ class ReflectedPrimitiveBool implements ReflectedType {
   }
 
   @override
-  Result serialize({required value}) {
+  Result serialize({required value, ReflectionManager? manager}) {
     // TODO: implement serialize
     throw UnimplementedError();
   }

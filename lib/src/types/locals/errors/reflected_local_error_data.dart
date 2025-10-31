@@ -33,15 +33,15 @@ class ReflectedLocalErrorData implements ReflectedType {
   bool isObjectCompatible({required value}) => value is ErrorData;
 
   @override
-  bool thisObjectCanConvert({required rawValue}) => rawValue != null && thisTypeCanConvert(type: rawValue.runtimeType);
+  bool thisObjectCanConvert({required rawValue, ReflectionManager? manager}) => rawValue != null && thisTypeCanConvert(type: rawValue.runtimeType);
 
   @override
-  bool thisTypeCanConvert({required Type type}) => const [ErrorData, ControlledFailure, InvalidProperty].contains(type);
+  bool thisTypeCanConvert({required Type type, ReflectionManager? manager}) => const [ErrorData, ControlledFailure, InvalidProperty].contains(type);
 
   bool isErrorTypeName(String typeName) => const [typeSerialization, ReflectedLocalControlledFailure.typeSerialization, ReflectedLocalInvalidProperty.typeSerialization].contains(typeName);
 
   @override
-  Result createNewInstance() {
+  Result createNewInstance({ReflectionManager? manager}) {
     return NegativeResult.controller(
       code: ErrorCode.implementationFailure,
       message: const FixedOration(message: 'Cannot create error instance without message'),
@@ -49,13 +49,13 @@ class ReflectedLocalErrorData implements ReflectedType {
   }
 
   @override
-  Result convertOrClone({required rawValue}) {
+  Result convertOrClone({required rawValue, ReflectionManager? manager}) {
     // TODO: implement convertOrClone
     throw UnimplementedError();
   }
 
   @override
-  Result serialize({required value}) {
+  Result serialize({required value, ReflectionManager? manager}) {
     // TODO: implement serialize
     throw UnimplementedError();
   }

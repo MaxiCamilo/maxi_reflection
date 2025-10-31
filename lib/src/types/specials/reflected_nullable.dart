@@ -14,7 +14,7 @@ class ReflectedNullable implements ReflectedType {
   bool get acceptsNull => true;
 
   @override
-  Result createNewInstance() => ResultValue(content: null);
+  Result createNewInstance({ReflectionManager? manager}) => ResultValue(content: null);
 
   @override
   bool get hasDefaultValue => true;
@@ -28,29 +28,29 @@ class ReflectedNullable implements ReflectedType {
   bool isObjectCompatible({required value}) => value == null || reflectedType.isObjectCompatible(value: value);
 
   @override
-  bool isTypeCompatible({required Type type}) => dartType == type || reflectedType.isTypeCompatible( type: type);
+  bool isTypeCompatible({required Type type}) => dartType == type || reflectedType.isTypeCompatible(type: type);
 
   @override
-  bool thisObjectCanConvert({required rawValue}) => rawValue == null || reflectedType.thisObjectCanConvert( rawValue: rawValue);
+  bool thisObjectCanConvert({required rawValue, ReflectionManager? manager}) => rawValue == null || reflectedType.thisObjectCanConvert(rawValue: rawValue, manager: manager);
 
   @override
-  bool thisTypeCanConvert({required Type type}) => dartType == type || reflectedType.thisTypeCanConvert( type: type);
+  bool thisTypeCanConvert({required Type type, ReflectionManager? manager}) => dartType == type || reflectedType.thisTypeCanConvert(type: type, manager: manager);
 
   @override
-  Result convertOrClone({required rawValue}) {
+  Result convertOrClone({required rawValue, ReflectionManager? manager}) {
     if (rawValue == null) {
       return ResultValue(content: null);
     } else {
-      return reflectedType.convertOrClone(rawValue: rawValue);
+      return reflectedType.convertOrClone(rawValue: rawValue, manager: manager);
     }
   }
 
   @override
-  Result serialize({required value}) {
+  Result serialize({required value, ReflectionManager? manager}) {
     if (value == null) {
       return ResultValue(content: null);
     } else {
-      return reflectedType.serialize(value: value);
+      return reflectedType.serialize(value: value, manager: manager);
     }
   }
 }

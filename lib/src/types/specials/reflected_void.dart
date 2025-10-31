@@ -23,10 +23,10 @@ class ReflectedVoid implements ReflectedType {
   String get name => 'void';
 
   @override
-  bool thisObjectCanConvert({required rawValue}) => true;
+  bool thisObjectCanConvert({required rawValue, ReflectionManager? manager}) => true;
 
   @override
-  bool thisTypeCanConvert({required Type type}) => true;
+  bool thisTypeCanConvert({required Type type, ReflectionManager? manager}) => true;
 
   @override
   bool isObjectCompatible({required value}) => true;
@@ -35,11 +35,11 @@ class ReflectedVoid implements ReflectedType {
   bool isTypeCompatible({required Type type}) => true;
 
   @override
-  Result convertOrClone({required rawValue}) => voidResult;
+  Result convertOrClone({required rawValue,ReflectionManager? manager}) => voidResult;
 
   @override
-  Result createNewInstance() => voidResult;
+  Result createNewInstance({ReflectionManager? manager}) => voidResult;
 
   @override
-  Result serialize({required value}) => voidResult;
+  Result serialize({required value, ReflectionManager? manager}) => voidResult;
 }
