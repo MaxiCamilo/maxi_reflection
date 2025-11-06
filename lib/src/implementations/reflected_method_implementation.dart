@@ -4,9 +4,9 @@ import 'package:maxi_framework/maxi_framework.dart';
 import 'package:maxi_reflection/maxi_reflection.dart';
 import 'package:meta/meta.dart';
 
-abstract class ReflectedMethodImplementation<T> implements ReflectedMethod {
+abstract class ReflectedMethodImplementation<E, R> implements ReflectedMethod {
   @protected
-  T internalInvoke({required dynamic instance, required InvocationParameters parameters});
+  R internalInvoke({required E? instance, required InvocationParameters parameters});
 
   const ReflectedMethodImplementation();
 
@@ -58,10 +58,26 @@ abstract class ReflectedMethodImplementation<T> implements ReflectedMethod {
         }
       }
 
-      final value = parameters.fixed(i);
+      dynamic value = parameters.fixed(i);
+      for (final anot in parOper.anotations.whereType<CustomConverter>()) {
+        if (anot.checkIfObjectCanBeConverted(rawValue: value)) {
+          final convResult = anot.convertOrClone(rawValue: value);
+          if (convResult.itsCorrect) {
+            value = convResult.content;
+          } else {
+            return NegativeResult.property(
+              propertyName: Oration.searchOration(
+                list: anotations,
+                defaultOration: FixedOration(message: name),
+              ),
+              message: convResult.error.message,
+            );
+          }
+        }
+      }
 
-      if (!parOper.reflectedType.isObjectCompatible(value: value)) {
-        if (parOper.reflectedType.thisObjectCanConvert(rawValue: value)) {
+      if (!parOper.reflectedType.checkThatObjectIsCompatible(value: value)) {
+        if (parOper.reflectedType.checkIfObjectCanBeConverted(rawValue: value)) {
           final conversionResult = parOper.reflectedType.convertOrClone(rawValue: value);
           if (conversionResult.itsCorrect) {
             parameters.namedParameters[parOper.name] = conversionResult.content;
@@ -90,11 +106,10 @@ abstract class ReflectedMethodImplementation<T> implements ReflectedMethod {
   }
 
   Result<void> _verifyNamedParameters(InvocationParameters parameters) {
-    for (int i = 0; i < namedParameters.length; i++) {
-      final parOper = namedParameters[i];
+    for (final prop in namedParameters) {
       //Exists?
-      if (i >= parameters.namedParameters.length) {
-        if (parOper.isRequired) {
+      if (!parameters.namedParameters.containsKey(prop.name)) {
+        if (prop.isRequired) {
           return NegativeResult.property(
             propertyName: Oration.searchOration(
               list: anotations,
@@ -103,25 +118,43 @@ abstract class ReflectedMethodImplementation<T> implements ReflectedMethod {
             message: FlexibleOration(message: 'To be able to invoke this method, %1 fixed arguments are required, but %2 arguments were defined', textParts: [fixedParameters.length, parameters.fixedParameters]),
           );
         } else {
-          parameters.namedParameters[parOper.name] = parOper.defaultValue;
+          parameters.namedParameters[prop.name] = prop.defaultValue;
           continue;
         }
       }
 
-      final value = parameters.named(parOper.name);
-      final isCompatible = parOper.reflectedType.isObjectCompatible(value: value);
-      if (!isCompatible) {
-        if (parOper.reflectedType.isObjectCompatible(value: value)) {
-          final conversionResult = parOper.reflectedType.convertOrClone(rawValue: value);
-          if (conversionResult.itsCorrect) {
-            parameters.namedParameters[parOper.name] = conversionResult.content;
+      dynamic propValue = parameters.namedParameters[prop.name];
+
+      for (final anot in prop.anotations.whereType<CustomConverter>()) {
+        if (anot.checkIfObjectCanBeConverted(rawValue: propValue)) {
+          final convResult = anot.convertOrClone(rawValue: propValue);
+          if (convResult.itsCorrect) {
+            propValue = convResult.content;
           } else {
             return NegativeResult.property(
               propertyName: Oration.searchOration(
                 list: anotations,
                 defaultOration: FixedOration(message: name),
               ),
-              message: FlexibleOration(message: 'The value for parameter %1 cannot be converted: %2', textParts: [parOper.name, conversionResult.error.message]),
+              message: convResult.error.message,
+            );
+          }
+        }
+      }
+
+      final isCompatible = prop.reflectedType.checkThatObjectIsCompatible(value: propValue);
+      if (!isCompatible) {
+        if (prop.reflectedType.checkIfObjectCanBeConverted(rawValue: propValue)) {
+          final conversionResult = prop.reflectedType.convertOrClone(rawValue: propValue);
+          if (conversionResult.itsCorrect) {
+            parameters.namedParameters[prop.name] = conversionResult.content;
+          } else {
+            return NegativeResult.property(
+              propertyName: Oration.searchOration(
+                list: anotations,
+                defaultOration: FixedOration(message: name),
+              ),
+              message: FlexibleOration(message: 'The value for parameter %1 cannot be converted: %2', textParts: [prop.name, conversionResult.error.message]),
             );
           }
         } else {
@@ -130,7 +163,7 @@ abstract class ReflectedMethodImplementation<T> implements ReflectedMethod {
               list: anotations,
               defaultOration: FixedOration(message: name),
             ),
-            message: FlexibleOration(message: 'The parameter %1 does not accept the value type %2', textParts: [parOper.name, value.runtimeType]),
+            message: FlexibleOration(message: 'The parameter %1 does not accept the value type %2', textParts: [prop.name, propValue.runtimeType]),
           );
         }
       }
@@ -140,7 +173,7 @@ abstract class ReflectedMethodImplementation<T> implements ReflectedMethod {
   }
 
   @override
-  Result accommodateAndInvoke({required instance, required InvocationParameters parameters}) {
+  Result<R> accommodateAndInvoke({required instance, required InvocationParameters parameters}) {
     final ifStaticResult = _checkIfStatic(instance != null);
     if (ifStaticResult.itsFailure) return ifStaticResult.cast();
 
@@ -175,17 +208,50 @@ abstract class ReflectedMethodImplementation<T> implements ReflectedMethod {
   }
 
   @override
-  Result invoke({required instance, required InvocationParameters parameters}) {
+  Result<R> invoke({required instance, required InvocationParameters parameters}) {
     final ifStaticResult = _checkIfStatic(instance != null);
     if (ifStaticResult.itsFailure) return ifStaticResult.cast();
 
+    if (!isStatic && instance is! E) {
+      return NegativeResult.property(
+        propertyName: Oration.searchOration(
+          list: anotations,
+          defaultOration: FixedOration(message: name),
+        ),
+        message: FlexibleOration(message: 'The method requires an instance of type %1', textParts: [E]),
+      );
+    }
+
     final newParameters = _verifyParameters(parameters);
-    if (newParameters.itsFailure) return newParameters;
+    if (newParameters.itsFailure) return newParameters.cast();
 
     try {
-      return ResultValue<T>(
-        content: internalInvoke(instance: instance, parameters: newParameters.content),
+      final resultValue = ResultValue<R>(
+        content: internalInvoke(instance: isStatic ? null : instance, parameters: newParameters.content),
       );
+
+      if (resultValue.itsFailure) return resultValue;
+
+      dynamic value = resultValue.content;
+
+      for (final anot in anotations.whereType<CustomConverter>()) {
+        if (anot.checkIfObjectCanBeConverted(rawValue: value)) {
+          final convResult = anot.convertOrClone(rawValue: value);
+          if (convResult.itsCorrect) {
+            value = convResult.content;
+          } else {
+            return NegativeResult.property(
+              propertyName: Oration.searchOration(
+                list: anotations,
+                defaultOration: FixedOration(message: name),
+              ),
+              message: convResult.error.message,
+            );
+          }
+        }
+      }
+
+      return ResultValue(content: value).cast<R>();
     } catch (ex, st) {
       log('Exception in reflected method $name!: ${ex.toString()}');
       log('---------------------------------------------------------------------------');

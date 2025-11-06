@@ -36,7 +36,7 @@ class EditFieldsFromMap implements SyncFunctionality<void> {
 
       //It has converter?
       for (final conv in field.anotations.whereType<CustomConverter>()) {
-        if (conv.thisObjectCanConvert(rawValue: fieldValue, manager: manager)) {
+        if (conv.checkIfObjectCanBeConverted(rawValue: fieldValue, manager: manager)) {
           final convValueResult = conv.convertOrClone(rawValue: fieldValue, manager: manager);
           if (convValueResult.itsCorrect) {
             fieldValue = convValueResult.content;

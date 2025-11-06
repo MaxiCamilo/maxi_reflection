@@ -1,7 +1,7 @@
 import 'package:maxi_framework/maxi_framework.dart';
 import 'package:maxi_reflection/maxi_reflection.dart';
 
-abstract interface class ReflectedEntity implements ReflectedType {
+abstract interface class ReflectedEntity<T> implements ReflectedType {
   ReflectedClass get classReflector;
 
   Oration get formalName;
@@ -13,16 +13,22 @@ abstract interface class ReflectedEntity implements ReflectedType {
   List<CustomSerializer> get customSerializers;
 
   List<ReflectedField> get changeableFields;
+  CustomCloner<T> get cloner;
 
   Result<ReflectedField> getPrimaryKeyField();
   Result<int> getPrimaryKey({required dynamic item});
+  Result<void> changePrimaryKey({required dynamic item, required int newID});
 
   ReflectedEntity makeAnotherReflector({List<CustomConverter> preferentCustomConverters = const [], List<CustomSerializer> preferentCustomSerializers = const []});
 
-  ReflectedEntityInterpreter<Map<String, dynamic>> buildMapInterpreter({required bool identifierRequired, required bool zeroIdentifiersAreAccepted, required bool requiredFieldEnable});
-  CustomSerializer<Map<String, dynamic>> buildMapSerializator();
+  ReflectedEntityInterpreter<Map<String, dynamic>, T> buildMapInterpreter({required bool identifierRequired, required bool zeroIdentifiersAreAccepted, required bool requiredFieldEnable});
+  CustomSerializer<Map<String, dynamic>> buildMapSerializator({required dynamic rawValue});
 
-  List buildEmptyList();
+  @override
+  Result<T> convertOrClone({required rawValue, ReflectionManager? manager});
 
-  Result<List> buildList({required List rawValues});
+  @override
+  Result<T> createNewInstance({ReflectionManager? manager});
+
+  Result<List<T>> buildEmptyList();
 }

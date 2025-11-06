@@ -22,8 +22,18 @@ export 'package:maxi_reflection/src/types/locals/orations/reflected_local_oratio
 export 'package:maxi_reflection/src/types/locals/errors/reflected_local_error_data.dart';
 export 'package:maxi_reflection/src/types/locals/errors/reflected_local_controlled_failure.dart';
 export 'package:maxi_reflection/src/types/locals/errors/reflected_local_invalid_property.dart';
+export 'package:maxi_reflection/src/types/maps/reflected_named_map.dart';
 
 export 'package:maxi_reflection/src/types/locals/results/reflected_local_result.dart';
 export 'package:maxi_reflection/src/types/locals/results/reflected_local_dynamic_result.dart';
 
 export 'package:maxi_reflection/src/types/list/reflected_typed_list.dart';
+export 'package:maxi_reflection/src/types/specials/reflected_flexible.dart';
+
+export 'package:maxi_reflection/src/logic/first_check_that_object_compatible.dart';
+
+export 'package:maxi_reflection/src/implementations/reflected_class_implementation.dart';
+export 'package:maxi_reflection/src/implementations/reflected_field_implementation.dart';
+export 'package:maxi_reflection/src/implementations/reflected_method_implementation.dart';
+export 'package:maxi_reflection/src/implementations/instances/reflected_field_instance.dart';
+export 'package:maxi_reflection/src/implementations/instances/reflected_method_instance.dart';

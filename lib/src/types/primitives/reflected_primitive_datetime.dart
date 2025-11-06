@@ -24,16 +24,16 @@ class ReflectedPrimitiveDatetime implements ReflectedType {
   ReflectedTypeMode get reflectionMode => ReflectedTypeMode.primitive;
 
   @override
-  bool isObjectCompatible({required value}) => value is String;
+  bool checkThatObjectIsCompatible({required value}) => value is String;
 
   @override
-  bool isTypeCompatible({required Type type}) => type == String;
+  bool checkThatTypeIsCompatible({required Type type}) => type == String;
 
   @override
-  bool thisTypeCanConvert({required Type type, ReflectionManager? manager}) => const [DateTime, int, String, double, num].contains(type);
+  bool checkIfThisTypeCanBeConverted({required Type type, ReflectionManager? manager}) => const [DateTime, int, String, double, num].contains(type);
 
   @override
-  bool thisObjectCanConvert({required rawValue, ReflectionManager? manager}) => rawValue != null && thisTypeCanConvert( type: rawValue.runtimeType);
+  bool checkIfObjectCanBeConverted({required rawValue, ReflectionManager? manager}) => rawValue != null && checkIfThisTypeCanBeConverted(type: rawValue.runtimeType);
 
   @override
   Result createNewInstance({ReflectionManager? manager}) {

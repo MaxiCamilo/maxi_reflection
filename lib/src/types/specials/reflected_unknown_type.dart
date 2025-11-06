@@ -23,16 +23,16 @@ class ReflectedUnknownType implements ReflectedType {
   String get name => dartType.toString();
 
   @override
-  bool isObjectCompatible({required value}) => value.runtimeType == dartType;
+  bool checkThatObjectIsCompatible({required value}) => value.runtimeType == dartType;
 
   @override
-  bool isTypeCompatible({required Type type}) => type == dartType;
+  bool checkThatTypeIsCompatible({required Type type}) => type == dartType;
 
   @override
-  bool thisObjectCanConvert({required rawValue, ReflectionManager? manager}) => false;
+  bool checkIfObjectCanBeConverted({required rawValue, ReflectionManager? manager}) => false;
 
   @override
-  bool thisTypeCanConvert({required Type type, ReflectionManager? manager}) => false;
+  bool checkIfThisTypeCanBeConverted({required Type type, ReflectionManager? manager}) => false;
 
   @override
   Result createNewInstance({ReflectionManager? manager}) => NegativeResult.controller(

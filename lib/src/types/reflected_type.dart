@@ -1,7 +1,7 @@
 import 'package:maxi_framework/maxi_framework.dart';
 import 'package:maxi_reflection/maxi_reflection.dart';
 
-enum ReflectedTypeMode { unkown, primitive, enums, reflectedClass, dynamicType, maxiClass, list, map }
+enum ReflectedTypeMode { unkown, primitive, enums, reflectedClass, dynamicType, classType, entityClass, maxiClass, list, map }
 
 abstract interface class ReflectedType {
   static const String prefixType = '\$type';
@@ -13,11 +13,11 @@ abstract interface class ReflectedType {
   bool get acceptsNull;
   bool get hasDefaultValue;
 
-  bool isTypeCompatible({required Type type});
-  bool isObjectCompatible({required dynamic value});
+  bool checkThatTypeIsCompatible({required Type type});
+  bool checkThatObjectIsCompatible({required dynamic value});
 
-  bool thisTypeCanConvert({required Type type, ReflectionManager? manager});
-  bool thisObjectCanConvert({required dynamic rawValue, ReflectionManager? manager});
+  bool checkIfThisTypeCanBeConverted({required Type type, ReflectionManager? manager});
+  bool checkIfObjectCanBeConverted({required dynamic rawValue, ReflectionManager? manager});
 
   Result<dynamic> createNewInstance({ReflectionManager? manager});
   Result<dynamic> serialize({required dynamic value, ReflectionManager? manager});

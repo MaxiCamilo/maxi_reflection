@@ -26,16 +26,16 @@ class ReflectedPrimitiveBool implements ReflectedType {
   ReflectedTypeMode get reflectionMode => ReflectedTypeMode.primitive;
 
   @override
-  bool isObjectCompatible({required value}) => value is bool;
+  bool checkThatObjectIsCompatible({required value}) => value is bool;
 
   @override
-  bool isTypeCompatible({required Type type}) => type == bool;
+  bool checkThatTypeIsCompatible({required Type type}) => type == bool;
 
   @override
-  bool thisTypeCanConvert({required Type type, ReflectionManager? manager}) => const [bool, String, int, double, num].contains(type);
+  bool checkIfThisTypeCanBeConverted({required Type type, ReflectionManager? manager}) => const [bool, String, int, double, num].contains(type);
 
   @override
-  bool thisObjectCanConvert({required rawValue, ReflectionManager? manager}) => rawValue != null && thisTypeCanConvert(type: rawValue.runtimeType);
+  bool checkIfObjectCanBeConverted({required rawValue, ReflectionManager? manager}) => rawValue != null && checkIfThisTypeCanBeConverted(type: rawValue.runtimeType);
 
   @override
   Result convertOrClone({required rawValue, ReflectionManager? manager}) {

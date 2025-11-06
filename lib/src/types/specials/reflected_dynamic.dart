@@ -23,19 +23,19 @@ class ReflectedDynamic implements ReflectedType {
   Result createNewInstance({ReflectionManager? manager}) => voidResult;
 
   @override
-  bool isObjectCompatible({required value}) => true;
+  bool checkThatObjectIsCompatible({required value}) => true;
 
   @override
   ReflectedTypeMode get reflectionMode => ReflectedTypeMode.dynamicType;
 
   @override
-  bool isTypeCompatible({required Type type}) => true;
+  bool checkThatTypeIsCompatible({required Type type}) => true;
 
   @override
-  bool thisObjectCanConvert({required rawValue, ReflectionManager? manager}) => true;
+  bool checkIfObjectCanBeConverted({required rawValue, ReflectionManager? manager}) => true;
 
   @override
-  bool thisTypeCanConvert({required Type type, ReflectionManager? manager}) => true;
+  bool checkIfThisTypeCanBeConverted({required Type type, ReflectionManager? manager}) => true;
 
   @override
   Result serialize({required value, ReflectionManager? manager}) {

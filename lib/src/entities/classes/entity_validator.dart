@@ -23,7 +23,7 @@ class EntityValidator implements Validator {
 
   @override
   Result<void> validateValue({required value}) {
-    if (!classReflector.isObjectCompatible(value: value)) {
+    if (!classReflector.checkThatObjectIsCompatible(value: value)) {
       return NegativeResult.controller(
         code: ErrorCode.wrongType,
         message: FlexibleOration(message: 'The value of type %1 is not compatible with entity %2', textParts: [value.runtimeType, classReflector.name]),

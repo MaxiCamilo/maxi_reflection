@@ -24,16 +24,16 @@ class ReflectedEnum implements ReflectedType {
   @override
   Result createNewInstance({ReflectionManager? manager}) => ResultValue(content: options.first.value);
   @override
-  bool thisTypeCanConvert({required Type type, ReflectionManager? manager}) => type == dartType || const [Enum, int, String].contains(type);
+  bool checkIfThisTypeCanBeConverted({required Type type, ReflectionManager? manager}) => type == dartType || const [Enum, int, String].contains(type);
 
   @override
-  bool thisObjectCanConvert({required rawValue, ReflectionManager? manager}) => rawValue != null && (rawValue is Enum || isTypeCompatible(type: rawValue.runtimeType));
+  bool checkIfObjectCanBeConverted({required rawValue, ReflectionManager? manager}) => rawValue != null && (rawValue is Enum || checkThatTypeIsCompatible(type: rawValue.runtimeType));
 
   @override
-  bool isObjectCompatible({required value}) => value.runtimeType == dartType || options.any((x) => x.value == value);
+  bool checkThatObjectIsCompatible({required value}) => value.runtimeType == dartType || options.any((x) => x.value == value);
 
   @override
-  bool isTypeCompatible({required Type type}) => type == dartType || options.any((x) => x.value.runtimeType == type);
+  bool checkThatTypeIsCompatible({required Type type}) => type == dartType || options.any((x) => x.value.runtimeType == type);
 
   @override
   String get name => dartType.toString();

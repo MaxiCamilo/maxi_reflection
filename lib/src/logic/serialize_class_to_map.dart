@@ -4,17 +4,16 @@ import 'package:maxi_reflection/maxi_reflection.dart';
 class SerializeClassToMap implements CustomSerializer<Map<String, dynamic>> {
   final ReflectedClass reflectedClass;
   final List<ReflectedField> fields;
-  final dynamic instance;
   final ReflectionManager? manager;
 
-  const SerializeClassToMap({required this.reflectedClass, required this.fields, required this.instance, required this.manager});
+  const SerializeClassToMap({required this.reflectedClass, required this.fields, required this.manager});
 
   @override
-  bool thisObjectCanSerialize({required rawValue, ReflectionManager? manager}) => reflectedClass.thisObjectCanConvert(rawValue: rawValue, manager: manager);
+  bool thisObjectCanSerialize({required rawValue, ReflectionManager? manager}) => reflectedClass.checkIfObjectCanBeConverted(rawValue: rawValue, manager: manager);
 
   @override
   Result<Map<String, dynamic>> serialize({required value, ReflectionManager? manager}) {
-    if (!reflectedClass.isObjectCompatible(value: value)) {
+    if (!reflectedClass.checkThatObjectIsCompatible(value: value)) {
       final reconvertResult = reflectedClass.convertOrClone(rawValue: value, manager: manager);
       if (reconvertResult.itsFailure) {
         return reconvertResult.cast();
@@ -22,10 +21,10 @@ class SerializeClassToMap implements CustomSerializer<Map<String, dynamic>> {
       value = reconvertResult.content;
     }
 
-    final mapValue = <String, dynamic>{ReflectedType.prefixType: '${reflectedClass.packagePrefix}.${reflectedClass.name}'};
+    final mapValue = <String, dynamic>{ReflectedType.prefixType: reflectedClass.typeSignature};
 
     for (final field in fields) {
-      final fieldValueResult = field.obtainValue(instance: instance);
+      final fieldValueResult = field.obtainValue(instance: value);
       if (fieldValueResult.itsFailure) return fieldValueResult.cast();
 
       dynamic serializeValue;

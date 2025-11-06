@@ -26,16 +26,16 @@ class ReflectedLocalInvalidProperty implements ReflectedType {
   ReflectedTypeMode get reflectionMode => ReflectedTypeMode.maxiClass;
 
   @override
-  bool isTypeCompatible({required Type type}) => type == InvalidProperty;
+  bool checkThatTypeIsCompatible({required Type type}) => type == InvalidProperty;
 
   @override
-  bool isObjectCompatible({required value}) => value is InvalidProperty;
+  bool checkThatObjectIsCompatible({required value}) => value is InvalidProperty;
 
   @override
-  bool thisTypeCanConvert({required Type type, ReflectionManager? manager}) => const [InvalidProperty, ControlledFailure, ErrorData, Map<String, dynamic>].contains(type);
+  bool checkIfThisTypeCanBeConverted({required Type type, ReflectionManager? manager}) => const [InvalidProperty, ControlledFailure, ErrorData, Map<String, dynamic>].contains(type);
 
   @override
-  bool thisObjectCanConvert({required rawValue, ReflectionManager? manager}) => rawValue != null && (rawValue is ErrorData || rawValue is Map<String, dynamic>);
+  bool checkIfObjectCanBeConverted({required rawValue, ReflectionManager? manager}) => rawValue != null && (rawValue is ErrorData || rawValue is Map<String, dynamic>);
 
   @override
   Result createNewInstance({ReflectionManager? manager}) {

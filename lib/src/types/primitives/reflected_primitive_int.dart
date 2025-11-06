@@ -26,15 +26,15 @@ class ReflectedPrimitiveInt implements ReflectedType {
   ReflectedTypeMode get reflectionMode => ReflectedTypeMode.primitive;
 
   @override
-  bool isObjectCompatible({required value}) => value is int;
+  bool checkThatObjectIsCompatible({required value}) => value is int;
 
   @override
-  bool isTypeCompatible({required Type type}) => type == int;
+  bool checkThatTypeIsCompatible({required Type type}) => type == int;
 
   @override
-  bool thisTypeCanConvert({required Type type, ReflectionManager? manager}) => const [int, double, num, String, bool, DateTime, Enum].contains(type);
+  bool checkIfThisTypeCanBeConverted({required Type type, ReflectionManager? manager}) => const [int, double, num, String, bool, DateTime, Enum].contains(type);
   @override
-  bool thisObjectCanConvert({required rawValue, ReflectionManager? manager}) {
+  bool checkIfObjectCanBeConverted({required rawValue, ReflectionManager? manager}) {
     if (rawValue == null) {
       return false;
     }
@@ -42,7 +42,7 @@ class ReflectedPrimitiveInt implements ReflectedType {
       return true;
     }
 
-    return thisTypeCanConvert(type: rawValue.runtimeType);
+    return checkIfThisTypeCanBeConverted(type: rawValue.runtimeType);
   }
 
   @override
@@ -50,7 +50,7 @@ class ReflectedPrimitiveInt implements ReflectedType {
     if (value is int) {
       return ResultValue(content: value);
     } else {
-      return convertOrClone(rawValue: value, ifEmptyIsZero: true,manager: manager);
+      return convertOrClone(rawValue: value, ifEmptyIsZero: true, manager: manager);
     }
   }
 

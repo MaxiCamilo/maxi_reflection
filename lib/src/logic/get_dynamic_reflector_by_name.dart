@@ -32,6 +32,10 @@ class GetDynamicReflectorByName implements SyncFunctionality<ReflectedType> {
     if (primitive.itsFailure) return primitive.cast();
     if (primitive.content != null) return ResultValue(content: primitive.content!);
 
+    if (typeName == 'Map<String,dynamic>') {
+      return ResultValue(content: ReflectedNamedMap(anotations: anotations));
+    }
+
     final local = GetLocalReflectorByName(name: typeName, anotations: anotations).execute();
     if (local.itsFailure) return primitive.cast();
     if (local.content != null) return ResultValue(content: local.content!);

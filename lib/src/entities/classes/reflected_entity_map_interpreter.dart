@@ -3,18 +3,18 @@ import 'package:maxi_reflection/maxi_reflection.dart';
 import 'package:maxi_reflection/src/entities/classes/reflected_entity_change_primary_key.dart';
 import 'package:maxi_reflection/src/logic/edit_fields_from_map.dart';
 
-class ReflectedEntityMapInterpreter implements ReflectedEntityInterpreter<Map<String, dynamic>> {
+class ReflectedEntityMapInterpreter<T> implements ReflectedEntityInterpreter<Map<String, dynamic>, T> {
   final bool identifierRequired;
   final bool zeroIdentifiersAreAccepted;
   final bool requiredFieldEnable;
 
-  final ReflectedEntity entityClass;
+  final ReflectedEntity<T> entityClass;
 
   const ReflectedEntityMapInterpreter({required this.identifierRequired, required this.zeroIdentifiersAreAccepted, required this.requiredFieldEnable, required this.entityClass});
 
   @override
-  Result interpretValue({required Map<String, dynamic> values, template, bool validate = true, ReflectionManager? manager}) {
-    late final dynamic newValue;
+  Result<T> interpretValue({required Map<String, dynamic> values, template, bool validate = true, ReflectionManager? manager}) {
+    late final T newValue;
     if (template == null) {
       final newValueResult = entityClass.createNewInstance(manager: manager);
       if (newValueResult.itsFailure) return newValueResult.cast();
@@ -24,6 +24,8 @@ class ReflectedEntityMapInterpreter implements ReflectedEntityInterpreter<Map<St
       if (newValueResult.itsFailure) return newValueResult.cast();
       newValue = newValueResult.content;
     }
+
+
 
     final hasPrimaryKey = entityClass.getPrimaryKeyField();
     if (hasPrimaryKey.itsCorrect) {
@@ -40,6 +42,6 @@ class ReflectedEntityMapInterpreter implements ReflectedEntityInterpreter<Map<St
     final changeResult = EditFieldsFromMap(fields: entityClass.changeableFields, requiredFieldEnable: requiredFieldEnable, values: values, manager: manager, instance: newValue).execute();
     if (changeResult.itsFailure) return changeResult.cast();
 
-    return ResultValue(content: newValue);
+    return ResultValue<T>(content: newValue);
   }
 }

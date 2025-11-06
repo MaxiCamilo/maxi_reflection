@@ -26,15 +26,15 @@ class ReflectedPrimitiveDouble implements ReflectedType {
   ReflectedTypeMode get reflectionMode => ReflectedTypeMode.primitive;
 
   @override
-  bool isObjectCompatible({required value}) => value is double;
+  bool checkThatObjectIsCompatible({required value}) => value is double;
 
   @override
-  bool isTypeCompatible({required Type type}) => type == double;
+  bool checkThatTypeIsCompatible({required Type type}) => type == double;
 
   @override
-  bool thisTypeCanConvert({required Type type, ReflectionManager? manager}) => const [double, int, num, String, bool, DateTime, Enum].contains(type);
+  bool checkIfThisTypeCanBeConverted({required Type type, ReflectionManager? manager}) => const [double, int, num, String, bool, DateTime, Enum].contains(type);
   @override
-  bool thisObjectCanConvert({required rawValue, ReflectionManager? manager}) {
+  bool checkIfObjectCanBeConverted({required rawValue, ReflectionManager? manager}) {
     if (rawValue == null) {
       return false;
     }
@@ -42,7 +42,7 @@ class ReflectedPrimitiveDouble implements ReflectedType {
       return true;
     }
 
-    return thisTypeCanConvert(type: rawValue.runtimeType);
+    return checkIfThisTypeCanBeConverted(type: rawValue.runtimeType);
   }
 
   @override

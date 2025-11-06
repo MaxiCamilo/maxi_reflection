@@ -26,16 +26,16 @@ class ReflectedTypedList<T> implements ReflectedType {
   Result createNewInstance({ReflectionManager? manager}) => ResultValue(content: <T>[]);
 
   @override
-  bool isTypeCompatible({required Type type}) => type == List<T>;
+  bool checkThatTypeIsCompatible({required Type type}) => type == List<T>;
 
   @override
-  bool isObjectCompatible({required value}) => value is List<T>;
+  bool checkThatObjectIsCompatible({required value}) => value is List<T>;
 
   @override
-  bool thisObjectCanConvert({required rawValue, ReflectionManager? manager}) => rawValue is List<T> || rawValue is T || rawValue is Iterable;
+  bool checkIfObjectCanBeConverted({required rawValue, ReflectionManager? manager}) => rawValue is List<T> || rawValue is T || rawValue is Iterable;
 
   @override
-  bool thisTypeCanConvert({required Type type, ReflectionManager? manager}) => type == (List<T>) || type == T || type == List || (type == Iterable<T>) || (type == Iterable);
+  bool checkIfThisTypeCanBeConverted({required Type type, ReflectionManager? manager}) => type == (List<T>) || type == T || type == List || (type == Iterable<T>) || (type == Iterable);
 
   @override
   Result convertOrClone({required rawValue, ReflectionManager? manager}) {
@@ -92,7 +92,7 @@ class ReflectedTypedList<T> implements ReflectedType {
       );
     }
 
-    if (actualReflector == null || !actualReflector.isObjectCompatible(value: item)) {
+    if (actualReflector == null || !actualReflector.checkThatObjectIsCompatible(value: item)) {
       final searchReflector = GetDynamicReflectorByType(dartType: item.runtimeType, reflectionManager: manager).execute();
       if (searchReflector.itsFailure) return searchReflector.cast();
 
@@ -137,7 +137,7 @@ class ReflectedTypedList<T> implements ReflectedType {
       ReflectedType? actualReflector;
 
       for (final item in value) {
-        if (actualReflector == null || !actualReflector.isObjectCompatible(value: item)) {
+        if (actualReflector == null || !actualReflector.checkThatObjectIsCompatible(value: item)) {
           final searchReflector = GetDynamicReflectorByType(dartType: item.runtimeType, reflectionManager: manager).execute();
           if (searchReflector.itsFailure) return searchReflector.cast();
 

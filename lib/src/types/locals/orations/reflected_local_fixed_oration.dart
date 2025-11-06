@@ -28,16 +28,16 @@ class ReflectedLocalFixedOration implements ReflectedType {
   Result createNewInstance({ReflectionManager? manager}) => ResultValue(content: const FixedOration(message: ''));
 
   @override
-  bool isObjectCompatible({required value}) => value is FixedOration;
+  bool checkThatObjectIsCompatible({required value}) => value is FixedOration;
 
   @override
-  bool isTypeCompatible({required Type type}) => type == FixedOration;
+  bool checkThatTypeIsCompatible({required Type type}) => type == FixedOration;
 
   @override
-  bool thisTypeCanConvert({required Type type, ReflectionManager? manager}) => const [FixedOration, FlexibleOration, Oration, Map<String, dynamic>].contains(type);
+  bool checkIfThisTypeCanBeConverted({required Type type, ReflectionManager? manager}) => const [FixedOration, FlexibleOration, Oration, Map<String, dynamic>].contains(type);
 
   @override
-  bool thisObjectCanConvert({required rawValue, ReflectionManager? manager}) => rawValue != null && (rawValue is Oration || thisTypeCanConvert(type: rawValue.runtimeType));
+  bool checkIfObjectCanBeConverted({required rawValue, ReflectionManager? manager}) => rawValue != null && (rawValue is Oration || checkIfThisTypeCanBeConverted(type: rawValue.runtimeType));
 
   @override
   Result serialize({required value, ReflectionManager? manager}) {

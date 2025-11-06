@@ -31,16 +31,16 @@ class ReflectedLocalDynamicResult implements ReflectedType {
   ReflectedTypeMode get reflectionMode => ReflectedTypeMode.maxiClass;
 
   @override
-  bool isObjectCompatible({required value}) => value is Result;
+  bool checkThatObjectIsCompatible({required value}) => value is Result;
 
   @override
-  bool isTypeCompatible({required Type type}) => type == Result;
+  bool checkThatTypeIsCompatible({required Type type}) => type == Result;
 
   @override
-  bool thisObjectCanConvert({required rawValue, ReflectionManager? manager}) => true;
+  bool checkIfObjectCanBeConverted({required rawValue, ReflectionManager? manager}) => true;
 
   @override
-  bool thisTypeCanConvert({required Type type, ReflectionManager? manager}) => true;
+  bool checkIfThisTypeCanBeConverted({required Type type, ReflectionManager? manager}) => true;
 
   @override
   Result createNewInstance({ReflectionManager? manager}) => voidResult;

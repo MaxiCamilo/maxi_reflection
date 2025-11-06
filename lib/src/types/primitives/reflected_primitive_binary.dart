@@ -31,16 +31,16 @@ class ReflectedPrimitiveBinary implements ReflectedType {
   ReflectedTypeMode get reflectionMode => ReflectedTypeMode.primitive;
 
   @override
-  bool isObjectCompatible({required value}) => value is Uint8List;
+  bool checkThatObjectIsCompatible({required value}) => value is Uint8List;
 
   @override
-  bool isTypeCompatible({required Type type}) => type == Uint8List;
+  bool checkThatTypeIsCompatible({required Type type}) => type == Uint8List;
 
   @override
-  bool thisTypeCanConvert({required Type type, ReflectionManager? manager}) => const [Uint8List, String, List<int>].contains(type);
+  bool checkIfThisTypeCanBeConverted({required Type type, ReflectionManager? manager}) => const [Uint8List, String, List<int>].contains(type);
 
   @override
-  bool thisObjectCanConvert({required rawValue, ReflectionManager? manager}) => rawValue != null && thisTypeCanConvert(type: rawValue.runtimeType);
+  bool checkIfObjectCanBeConverted({required rawValue, ReflectionManager? manager}) => rawValue != null && checkIfThisTypeCanBeConverted(type: rawValue.runtimeType);
 
   @override
   Result serialize({required value, ReflectionManager? manager}) {

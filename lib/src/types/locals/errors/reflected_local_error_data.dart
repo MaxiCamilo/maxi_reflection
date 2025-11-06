@@ -27,16 +27,16 @@ class ReflectedLocalErrorData implements ReflectedType {
   ReflectedTypeMode get reflectionMode => ReflectedTypeMode.maxiClass;
 
   @override
-  bool isTypeCompatible({required Type type}) => type == ErrorData;
+  bool checkThatTypeIsCompatible({required Type type}) => type == ErrorData;
 
   @override
-  bool isObjectCompatible({required value}) => value is ErrorData;
+  bool checkThatObjectIsCompatible({required value}) => value is ErrorData;
 
   @override
-  bool thisObjectCanConvert({required rawValue, ReflectionManager? manager}) => rawValue != null && thisTypeCanConvert(type: rawValue.runtimeType);
+  bool checkIfObjectCanBeConverted({required rawValue, ReflectionManager? manager}) => rawValue != null && checkIfThisTypeCanBeConverted(type: rawValue.runtimeType);
 
   @override
-  bool thisTypeCanConvert({required Type type, ReflectionManager? manager}) => const [ErrorData, ControlledFailure, InvalidProperty].contains(type);
+  bool checkIfThisTypeCanBeConverted({required Type type, ReflectionManager? manager}) => const [ErrorData, ControlledFailure, InvalidProperty].contains(type);
 
   bool isErrorTypeName(String typeName) => const [typeSerialization, ReflectedLocalControlledFailure.typeSerialization, ReflectedLocalInvalidProperty.typeSerialization].contains(typeName);
 

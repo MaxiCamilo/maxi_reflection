@@ -23,19 +23,19 @@ class ReflectedVoid implements ReflectedType {
   String get name => 'void';
 
   @override
-  bool thisObjectCanConvert({required rawValue, ReflectionManager? manager}) => true;
+  bool checkIfObjectCanBeConverted({required rawValue, ReflectionManager? manager}) => true;
 
   @override
-  bool thisTypeCanConvert({required Type type, ReflectionManager? manager}) => true;
+  bool checkIfThisTypeCanBeConverted({required Type type, ReflectionManager? manager}) => true;
 
   @override
-  bool isObjectCompatible({required value}) => true;
+  bool checkThatObjectIsCompatible({required value}) => true;
 
   @override
-  bool isTypeCompatible({required Type type}) => true;
+  bool checkThatTypeIsCompatible({required Type type}) => true;
 
   @override
-  Result convertOrClone({required rawValue,ReflectionManager? manager}) => voidResult;
+  Result convertOrClone({required rawValue, ReflectionManager? manager}) => voidResult;
 
   @override
   Result createNewInstance({ReflectionManager? manager}) => voidResult;

@@ -47,17 +47,17 @@ class ReflectedLocalResult<T> implements ReflectedType {
   }
 
   @override
-  bool isObjectCompatible({required value}) => value is Result<T>;
+  bool checkThatObjectIsCompatible({required value}) => value is Result<T>;
 
   @override
-  bool isTypeCompatible({required Type type}) => type == Result<T>;
+  bool checkThatTypeIsCompatible({required Type type}) => type == Result<T>;
 
   @override
-  bool thisTypeCanConvert({required Type type, ReflectionManager? manager}) =>
+  bool checkIfThisTypeCanBeConverted({required Type type, ReflectionManager? manager}) =>
       [ResultValue<T>, T, NegativeResult<T>, ExceptionResult<T>, CancelationResult<T>, ErrorData, ControlledFailure, InvalidProperty, Map<String, dynamic>].contains(type);
 
   @override
-  bool thisObjectCanConvert({required rawValue, ReflectionManager? manager}) => (rawValue == null && isVoidResult) || (rawValue != null && thisTypeCanConvert(type: rawValue.runtimeType));
+  bool checkIfObjectCanBeConverted({required rawValue, ReflectionManager? manager}) => (rawValue == null && isVoidResult) || (rawValue != null && checkIfThisTypeCanBeConverted(type: rawValue.runtimeType));
 
   @override
   Result serialize({required value, ReflectionManager? manager}) {
@@ -89,7 +89,7 @@ class ReflectedLocalResult<T> implements ReflectedType {
     if (reflectorResult.itsFailure) return reflectorResult.cast();
 
     final reflector = reflectorResult.content;
-    if (!reflector.thisObjectCanConvert(rawValue: value)) {
+    if (!reflector.checkIfObjectCanBeConverted(rawValue: value)) {
       return NegativeResult.controller(
         code: ErrorCode.invalidValue,
         message: FlexibleOration(message: 'It is not possible to serialize content of type %1 for the result', textParts: [value.runtimeType]),

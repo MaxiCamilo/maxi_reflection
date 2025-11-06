@@ -25,16 +25,16 @@ class ReflectedNullable implements ReflectedType {
   String get name => '${reflectedType.name}?';
 
   @override
-  bool isObjectCompatible({required value}) => value == null || reflectedType.isObjectCompatible(value: value);
+  bool checkThatObjectIsCompatible({required value}) => value == null || reflectedType.checkThatObjectIsCompatible(value: value);
 
   @override
-  bool isTypeCompatible({required Type type}) => dartType == type || reflectedType.isTypeCompatible(type: type);
+  bool checkThatTypeIsCompatible({required Type type}) => dartType == type || reflectedType.checkThatTypeIsCompatible(type: type);
 
   @override
-  bool thisObjectCanConvert({required rawValue, ReflectionManager? manager}) => rawValue == null || reflectedType.thisObjectCanConvert(rawValue: rawValue, manager: manager);
+  bool checkIfObjectCanBeConverted({required rawValue, ReflectionManager? manager}) => rawValue == null || reflectedType.checkIfObjectCanBeConverted(rawValue: rawValue, manager: manager);
 
   @override
-  bool thisTypeCanConvert({required Type type, ReflectionManager? manager}) => dartType == type || reflectedType.thisTypeCanConvert(type: type, manager: manager);
+  bool checkIfThisTypeCanBeConverted({required Type type, ReflectionManager? manager}) => dartType == type || reflectedType.checkIfThisTypeCanBeConverted(type: type, manager: manager);
 
   @override
   Result convertOrClone({required rawValue, ReflectionManager? manager}) {

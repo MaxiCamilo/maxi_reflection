@@ -23,16 +23,16 @@ class ReflectedUnknownCastableType<T> implements ReflectedType {
   String get name => T.toString();
 
   @override
-  bool isObjectCompatible({required value}) => value is T;
+  bool checkThatObjectIsCompatible({required value}) => value is T;
 
   @override
-  bool isTypeCompatible({required Type type}) => type == T;
+  bool checkThatTypeIsCompatible({required Type type}) => type == T;
 
   @override
-  bool thisObjectCanConvert({required rawValue, ReflectionManager? manager}) => false;
+  bool checkIfObjectCanBeConverted({required rawValue, ReflectionManager? manager}) => false;
 
   @override
-  bool thisTypeCanConvert({required Type type, ReflectionManager? manager}) => false;
+  bool checkIfThisTypeCanBeConverted({required Type type, ReflectionManager? manager}) => false;
 
   @override
   Result createNewInstance({ReflectionManager? manager}) => NegativeResult.controller(

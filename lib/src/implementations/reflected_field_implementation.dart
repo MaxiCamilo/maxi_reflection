@@ -4,12 +4,12 @@ import 'package:maxi_framework/maxi_framework.dart';
 import 'package:maxi_reflection/maxi_reflection.dart';
 import 'package:meta/meta.dart';
 
-abstract class ReflectedFieldImplementation<T> implements ReflectedField {
+abstract class ReflectedFieldImplementation<E, R> implements ReflectedField {
   const ReflectedFieldImplementation();
 
   @protected
-  T internalGetter({required dynamic instance});
-  void internalSetter({required dynamic instance, required dynamic value});
+  R internalGetter({required E? instance});
+  void internalSetter({required E? instance, required R value});
 
   @override
   bool get readOnly => isFinal;
@@ -28,13 +28,30 @@ abstract class ReflectedFieldImplementation<T> implements ReflectedField {
     }
   }
 
+  Result<void> _checkInstanceType({required dynamic instance}) {
+    if (!isStatic && instance is! E) {
+      return NegativeResult.property(
+        propertyName: Oration.searchOration(
+          list: anotations,
+          defaultOration: FixedOration(message: name),
+        ),
+        message: FlexibleOration(message: 'The field requires an instance of type %1', textParts: [E]),
+      );
+    }
+
+    return voidResult;
+  }
+
   @override
   Result obtainValue({required instance}) {
     final ifStaticResult = _checkIfStatic(instance != null);
     if (ifStaticResult.itsFailure) return ifStaticResult.cast();
 
+    final itsInstanceCorrect = _checkInstanceType(instance: instance);
+    if (itsInstanceCorrect.itsFailure) return itsInstanceCorrect.cast();
+
     try {
-      return ResultValue<T>(content: internalGetter(instance: instance));
+      return ResultValue<R>(content: internalGetter(instance: instance));
     } catch (ex, st) {
       log('Exception in obtain field value $name!: ${ex.toString()}');
       log('---------------------------------------------------------------------------');
@@ -63,8 +80,28 @@ abstract class ReflectedFieldImplementation<T> implements ReflectedField {
     final ifStaticResult = _checkIfStatic(instance != null);
     if (ifStaticResult.itsFailure) return ifStaticResult.cast();
 
-    if (!reflectedType.isObjectCompatible(value: value)) {
-      if (reflectedType.thisObjectCanConvert(rawValue: value)) {
+    final itsInstanceCorrect = _checkInstanceType(instance: instance);
+    if (itsInstanceCorrect.itsFailure) return itsInstanceCorrect.cast();
+
+    for (final anot in anotations.whereType<CustomConverter>()) {
+      if (anot.checkIfObjectCanBeConverted(rawValue: value)) {
+        final convResult = anot.convertOrClone(rawValue: value);
+        if (convResult.itsCorrect) {
+          value = convResult.content;
+        } else {
+          return NegativeResult.property(
+            propertyName: Oration.searchOration(
+              list: anotations,
+              defaultOration: FixedOration(message: name),
+            ),
+            message: convResult.error.message,
+          );
+        }
+      }
+    }
+
+    if (!reflectedType.checkThatObjectIsCompatible(value: value)) {
+      if (reflectedType.checkIfObjectCanBeConverted(rawValue: value)) {
         final convertedResult = reflectedType.convertOrClone(rawValue: value);
         if (convertedResult.itsCorrect) {
           value = convertedResult.content;
