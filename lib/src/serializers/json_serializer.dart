@@ -76,8 +76,15 @@ class JsonSerializer implements Serializer<String, String> {
 
     int i = 1;
     for (final item in jsonResult.content) {
-      
-      
+      final newObjectResult = reflectorResult.content.convertOrClone(rawValue: item);
+      if (newObjectResult.itsCorrect) {
+        list.add(newObjectResult.cast<T>().content);
+      } else {
+        return NegativeResult.property(
+          propertyName: FlexibleOration(message: 'List item %1', textParts: [i]),
+          message: newObjectResult.error.message,
+        );
+      }
 
       i += 1;
     }
@@ -104,14 +111,34 @@ class JsonSerializer implements Serializer<String, String> {
       }
     }
 
-    final list = <T>[];
+    final list = [];
+
+    int i = 1;
+    for (final item in jsonResult.content) {
+      final newObjectResult = reflectorResult.content.convertOrClone(rawValue: item);
+      if (newObjectResult.itsCorrect) {
+        list.add(newObjectResult.content);
+      } else {
+        return NegativeResult.property(
+          propertyName: FlexibleOration(message: 'List item %1', textParts: [i]),
+          message: newObjectResult.error.message,
+        );
+      }
+
+      i += 1;
+    }
 
     return ResultValue(content: list);
   }
 
   @override
   Result interpretUsingType({required String rawValue, required Type type}) {
-    // TODO: implement interpretUsingType
-    throw UnimplementedError();
+    final jsonResult = parseTextToJson(text: rawValue);
+    if (jsonResult.itsFailure) return jsonResult.cast();
+
+    final reflectorResult = GetDynamicReflectorByType(dartType: type, reflectionManager: reflectionManager).execute();
+    if (reflectorResult.itsFailure) return reflectorResult.cast();
+
+    return reflectorResult.content.convertOrClone(rawValue: jsonResult.content, manager: reflectionManager);
   }
 }
