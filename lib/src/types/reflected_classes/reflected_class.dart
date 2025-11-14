@@ -21,4 +21,9 @@ abstract interface class ReflectedClass implements ReflectedType {
   Result<void> changeValue({required String name, required dynamic instance, required dynamic value});
 
   Result<ReflectedEntity> buildEntityReflector({required ReflectionManager manager});
+
+  static Result buildInterfaceClassErrorResult(String name) => NegativeResult.controller(
+    code: ErrorCode.implementationFailure,
+    message: FlexibleOration(message: 'Class %1 is an interface; therefore, it cannot be instantiated', textParts: [name]),
+  );
 }

@@ -34,6 +34,8 @@ class ReflectedFieldInstance<E, R> extends ReflectedFieldImplementation<E, R> {
     required this.getter,
   });
 
+  
+
   @override
   R internalGetter({required E? instance}) => getter(instance);
 

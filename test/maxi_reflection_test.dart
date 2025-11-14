@@ -117,6 +117,16 @@ class _SuperEntityReflector extends ReflectedClassImplementation<_SuperEntity> {
   }
 }
 
+const _superEnum = ReflectedEnum(
+  anotations: [],
+  dartType: _SuperEnum,
+  options: [
+    ReflectedEnumOption(anotations: [], value: _SuperEnum.first),
+    ReflectedEnumOption(anotations: [], value: _SuperEnum.second),
+    ReflectedEnumOption(anotations: [], value: _SuperEnum.third),
+  ],
+);
+
 class _SuperBook implements ReflectionBook {
   const _SuperBook();
 
@@ -125,17 +135,7 @@ class _SuperBook implements ReflectionBook {
 
   @override
   List<ReflectedEnum> buildEnums({required ReflectionManager manager}) {
-    return const [
-      ReflectedEnum(
-        anotations: [],
-        dartType: _SuperEnum,
-        options: [
-          ReflectedEnumOption(anotations: [], value: _SuperEnum.first),
-          ReflectedEnumOption(anotations: [], value: _SuperEnum.second),
-          ReflectedEnumOption(anotations: [], value: _SuperEnum.third),
-        ],
-      ),
-    ];
+    return const [_superEnum];
   }
 
   @override
