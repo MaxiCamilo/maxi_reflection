@@ -90,7 +90,6 @@ class ReflectedPrimitiveBool implements ReflectedType {
 
   @override
   Result serialize({required value, ReflectionManager? manager}) {
-    // TODO: implement serialize
-    throw UnimplementedError();
+    return ResultValue(content: value);
   }
 }
