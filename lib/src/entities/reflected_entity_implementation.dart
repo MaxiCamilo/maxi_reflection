@@ -238,7 +238,7 @@ class ReflectedEntityImplementation<T> with DisposableMixin, InitializableMixin 
         message: FlexibleOration(message: 'Entity %1 does not have a main constructor', textParts: [name]),
       );
     } else {
-      final itemResult = _mainConstuctor!.invoke(instance: null, parameters: InvocationParameters.emptry);
+      final itemResult = _mainConstuctor!.invoke(instance: null, parameters: InvocationParameters.empty);
       if (itemResult.itsCorrect) {
         if (itemResult.contentType == T) {
           return itemResult.cast<T>();

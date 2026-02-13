@@ -1,5 +1,5 @@
 name: maxi_reflection
-description: A starting point for Dart libraries or applications.
+description: Personal library by Maximiliano Camilo for reflecting classes in Dart. It allows you to know a class's structure, its attributes, methods, and decorators at runtime
 version: 1.0.0
 publish_to: none
 # repository: https://github.com/my_org/my_repo

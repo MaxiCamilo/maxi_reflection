@@ -187,7 +187,7 @@ void main() {
 
     test('Call static method', () {
       final entity = reflector.searchEntityReflected<_SuperEntity>().content;
-      entity.classReflector.invoke(instance: null, name: 'secretMethod', parameters: InvocationParameters.emptry);
+      entity.classReflector.invoke(instance: null, name: 'secretMethod', parameters: InvocationParameters.empty);
     });
 
     test('Call static field', () {

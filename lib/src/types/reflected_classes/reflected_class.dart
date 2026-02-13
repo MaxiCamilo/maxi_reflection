@@ -14,7 +14,7 @@ abstract interface class ReflectedClass implements ReflectedType {
   List<ReflectedMethod> get methods;
   List<ReflectedField> get fields;
 
-  Result<dynamic> invokeContructor({String name = '', InvocationParameters parameters = InvocationParameters.emptry});
+  Result<dynamic> invokeContructor({String name = '', InvocationParameters parameters = InvocationParameters.empty});
   Result<dynamic> invoke({required dynamic instance, required String name, required InvocationParameters parameters, bool tryAccommodateParameters = false});
 
   Result<dynamic> obtainValue({required String name, required dynamic instance});

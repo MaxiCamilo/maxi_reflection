@@ -255,7 +255,7 @@ abstract class ReflectedClassImplementation<T extends Object> with DisposableMix
   }
 
   @override
-  Result<T> invokeContructor({String name = '', InvocationParameters parameters = InvocationParameters.emptry}) {
+  Result<T> invokeContructor({String name = '', InvocationParameters parameters = InvocationParameters.empty}) {
     final initStatus = initialize();
     if (initStatus.itsFailure) return initStatus.cast();
 
