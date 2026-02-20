@@ -100,7 +100,7 @@ class _SuperEntityReflector extends ReflectedClassImplementation<_SuperEntity> {
           ),
         ],
         reflectedType: const ReflectedPrimitiveString(),
-        invoker: (instance, parameters) => instance!.greet(parameters.firts<String>(), isWelcome: parameters.named<bool>('isWelcome')),
+        invoker: (instance, parameters) => instance!.greet(parameters.first<String>(), isWelcome: parameters.named<bool>('isWelcome')),
       ),
 
       ReflectedMethodInstance<_SuperEntity, String>(
