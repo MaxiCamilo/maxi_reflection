@@ -17,8 +17,8 @@ abstract interface class ReflectedClass implements ReflectedType {
   Result<dynamic> invokeContructor({String name = '', InvocationParameters parameters = InvocationParameters.empty});
   Result<dynamic> invoke({required dynamic instance, required String name, required InvocationParameters parameters, bool tryAccommodateParameters = false});
 
-  Result<dynamic> obtainValue({required String name, required dynamic instance});
-  Result<void> changeValue({required String name, required dynamic instance, required dynamic value});
+  Result<dynamic> obtainValue({required String name, required dynamic instance, required ReflectionManager manager});
+  Result<void> changeValue({required String name, required dynamic instance, required dynamic value, required ReflectionManager manager});
 
   Result<ReflectedEntity> buildEntityReflector({required ReflectionManager manager});
 

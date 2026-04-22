@@ -7,7 +7,7 @@ class ReflectedEntityBasicCloner<T> implements CustomCloner<T> {
   const ReflectedEntityBasicCloner({required this.reflectedEntity});
 
   @override
-  Result<T> cloneValue({required T original, ReflectionManager? manager}) {
+  Result<T> cloneValue({required T original, required ReflectionManager manager}) {
     if (reflectedEntity.classReflector.isInterface) {
       return NegativeResult.controller(
         code: ErrorCode.implementationFailure,
@@ -20,10 +20,10 @@ class ReflectedEntityBasicCloner<T> implements CustomCloner<T> {
     final newValue = newValueResult.content as T;
 
     for (final prop in reflectedEntity.changeableFields) {
-      final propValueResult = prop.obtainValue(instance: original);
+      final propValueResult = prop.obtainValue(instance: original, manager: manager);
       if (propValueResult.itsFailure) return propValueResult.cast();
 
-      final changeResult = prop.changeValue(instance: newValue, value: propValueResult.content);
+      final changeResult = prop.changeValue(instance: newValue, value: propValueResult.content, manager: manager);
       if (changeResult.itsFailure) return changeResult.cast();
     }
 

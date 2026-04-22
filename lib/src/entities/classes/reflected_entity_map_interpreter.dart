@@ -13,7 +13,7 @@ class ReflectedEntityMapInterpreter<T> implements ReflectedEntityInterpreter<Map
   const ReflectedEntityMapInterpreter({required this.identifierRequired, required this.zeroIdentifiersAreAccepted, required this.requiredFieldEnable, required this.entityClass});
 
   @override
-  Result<T> interpretValue({required Map<String, dynamic> values, template, bool validate = true, ReflectionManager? manager}) {
+  Result<T> interpretValue({required Map<String, dynamic> values, template, bool validate = true, required ReflectionManager manager}) {
     late final T newValue;
     if (template == null) {
       final newValueResult = entityClass.createNewInstance(manager: manager);
@@ -35,6 +35,7 @@ class ReflectedEntityMapInterpreter<T> implements ReflectedEntityInterpreter<Map
         entityClass: entityClass,
         identifierRequired: identifierRequired,
         zeroIdentifiersAreAccepted: zeroIdentifiersAreAccepted,
+        manager: manager
       ).execute();
       if (changePrimaryKeyResult.itsFailure) return changePrimaryKeyResult.cast();
     }

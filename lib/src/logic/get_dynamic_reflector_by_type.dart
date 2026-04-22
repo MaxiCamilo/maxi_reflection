@@ -34,7 +34,7 @@ class GetDynamicReflectorByType implements SyncFunctionality<ReflectedType> {
     if (primitive.itsFailure) return primitive.cast();
     if (primitive.content != null) return ResultValue(content: primitive.content!);
 
-    if (dartType == Map<String, dynamic>) {
+    if (dartType is Map<String, dynamic>) {
       return ResultValue(content: ReflectedNamedMap(anotations: anotations));
     }
 

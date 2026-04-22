@@ -10,8 +10,8 @@ abstract interface class ReflectedField {
   bool get isLate;
   bool get isFinal;
 
-  Result<void> changeValue({required dynamic instance, required dynamic value});
-  Result<dynamic> obtainValue({required dynamic instance});
+  Result<void> changeValue({required dynamic instance, required dynamic value, required ReflectionManager manager});
+  Result<dynamic> obtainValue({required dynamic instance, required ReflectionManager manager});
 
   static Never constSeterError(String name) => throw NegativeResult.controller(
     code: ErrorCode.implementationFailure,

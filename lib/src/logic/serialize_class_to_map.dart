@@ -12,7 +12,7 @@ class SerializeClassToMap implements CustomSerializer<Map<String, dynamic>> {
   bool thisObjectCanSerialize({required rawValue, ReflectionManager? manager}) => reflectedClass.checkIfObjectCanBeConverted(rawValue: rawValue, manager: manager);
 
   @override
-  Result<Map<String, dynamic>> serialize({required value, ReflectionManager? manager}) {
+  Result<Map<String, dynamic>> serialize({required value, required ReflectionManager manager}) {
     if (!reflectedClass.checkThatObjectIsCompatible(value: value)) {
       final reconvertResult = reflectedClass.convertOrClone(rawValue: value, manager: manager);
       if (reconvertResult.itsFailure) {
@@ -24,12 +24,12 @@ class SerializeClassToMap implements CustomSerializer<Map<String, dynamic>> {
     final mapValue = <String, dynamic>{ReflectedType.prefixType: reflectedClass.typeSignature};
 
     for (final field in fields) {
-      final fieldValueResult = field.obtainValue(instance: value);
+      final fieldValueResult = field.obtainValue(instance: value, manager: manager);
       if (fieldValueResult.itsFailure) return fieldValueResult.cast();
 
       dynamic serializeValue;
       for (final conv in field.anotations.whereType<CustomSerializer>()) {
-        if (conv.thisObjectCanSerialize(rawValue: fieldValueResult.content)) {
+        if (conv.thisObjectCanSerialize(rawValue: fieldValueResult.content, manager: manager)) {
           final convertResult = conv.serialize(value: fieldValueResult.content, manager: manager);
           if (convertResult.itsCorrect) {
             serializeValue = convertResult.content;

@@ -83,7 +83,7 @@ class ReflectedEntityImplementation<T> with DisposableMixin, InitializableMixin 
       defaultOration: FixedOration(message: classReflector.name),
     );
     cloner = classReflector.anotations.selectType<CustomCloner<T>>() ?? ReflectedEntityBasicCloner<T>(reflectedEntity: this);
-    validator = EntityValidator(classReflector: classReflector);
+    validator = EntityValidator(classReflector: classReflector, manager: manager);
     /*
     _mainConstuctor = classReflector.methods.selectItem(
       (x) => x.methodType == ReflectedMethodType.contructor && (x.fixedParameters.isEmpty || x.fixedParameters.every((x) => x.isOptional)) && (x.namedParameters.isEmpty || x.namedParameters.every((x) => !x.isRequired)),
@@ -157,7 +157,7 @@ class ReflectedEntityImplementation<T> with DisposableMixin, InitializableMixin 
     final isValid = FirstCheckThatObjectCompatible(reflectedType: this, object: item, acceptNull: false, manager: manager).execute();
     if (isValid.itsFailure) return isValid.cast();
 
-    final idResult = pkField.content.obtainValue(instance: item);
+    final idResult = pkField.content.obtainValue(instance: item, manager: manager);
     if (idResult.itsCorrect) {
       if (idResult.contentType == int) {
         return idResult.cast<int>();
@@ -174,7 +174,7 @@ class ReflectedEntityImplementation<T> with DisposableMixin, InitializableMixin 
 
   @override
   Result<void> changePrimaryKey({required item, required int newID}) {
-    return ReflectedEntityChangePrimaryKey(instance: item, idValue: newID, identifierRequired: true, zeroIdentifiersAreAccepted: true, entityClass: this).execute();
+    return ReflectedEntityChangePrimaryKey(instance: item, idValue: newID, identifierRequired: true, zeroIdentifiersAreAccepted: true, entityClass: this, manager: manager).execute();
   }
 
   @override

@@ -92,7 +92,13 @@ class ReflectedTypedList<T> implements ReflectedType {
       );
     }
 
-    if (actualReflector == null || !actualReflector.checkThatObjectIsCompatible(value: item)) {
+    if (item is Map<String, dynamic>) {
+      final searchReflector = GetDynamicReflectorByType(dartType: T, reflectionManager: manager).execute();
+      if (searchReflector.itsFailure) return searchReflector.cast();
+      actualReflector = searchReflector.content;
+    }
+
+    if (item is! Map<String, dynamic> && (actualReflector == null || !actualReflector.checkThatObjectIsCompatible(value: item))) {
       final searchReflector = GetDynamicReflectorByType(dartType: item.runtimeType, reflectionManager: manager).execute();
       if (searchReflector.itsFailure) return searchReflector.cast();
 
@@ -106,7 +112,14 @@ class ReflectedTypedList<T> implements ReflectedType {
       }
     }
 
-    final convertResult = actualReflector.convertOrClone(rawValue: item);
+    if (actualReflector == null) {
+      return NegativeResult.controller(
+        code: ErrorCode.implementationFailure,
+        message: const FixedOration(message: 'The reflector for a list item was not found'),
+      );
+    }
+
+    final convertResult = actualReflector.convertOrClone(rawValue: item, manager: manager);
     if (convertResult.itsCorrect) {
       if (convertResult.content is T) {
         return ResultValue(content: (actualReflector, (convertResult.content as T)));
@@ -138,7 +151,7 @@ class ReflectedTypedList<T> implements ReflectedType {
 
       for (final item in value) {
         if (actualReflector == null || !actualReflector.checkThatObjectIsCompatible(value: item)) {
-          final searchReflector = GetDynamicReflectorByType(dartType: item.runtimeType, reflectionManager: manager).execute();
+          final searchReflector = GetDynamicReflectorByType(dartType: T, reflectionManager: manager).execute();
           if (searchReflector.itsFailure) return searchReflector.cast();
 
           if (searchReflector.content.reflectionMode == ReflectedTypeMode.unkown) {
@@ -151,7 +164,7 @@ class ReflectedTypedList<T> implements ReflectedType {
           }
         }
 
-        final convertResult = actualReflector.serialize(value: value);
+        final convertResult = actualReflector.serialize(value: item, manager: manager);
         if (convertResult.itsCorrect) {
           convertedValue.add(convertResult.content);
           i += 1;

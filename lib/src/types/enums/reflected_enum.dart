@@ -27,7 +27,7 @@ class ReflectedEnum implements ReflectedType {
   bool checkIfThisTypeCanBeConverted({required Type type, ReflectionManager? manager}) => type == dartType || const [Enum, int, String].contains(type);
 
   @override
-  bool checkIfObjectCanBeConverted({required rawValue, ReflectionManager? manager}) => rawValue != null && (rawValue is Enum || checkThatTypeIsCompatible(type: rawValue.runtimeType));
+  bool checkIfObjectCanBeConverted({required rawValue, ReflectionManager? manager}) => rawValue != null && ((rawValue is Enum || checkThatTypeIsCompatible(type: rawValue.runtimeType)) || rawValue is num);
 
   @override
   bool checkThatObjectIsCompatible({required value}) => value.runtimeType == dartType || options.any((x) => x.value == value);

@@ -6,7 +6,7 @@ class EditFieldsFromMap implements SyncFunctionality<void> {
   final Map<String, dynamic> values;
   final dynamic instance;
   final bool requiredFieldEnable;
-  final ReflectionManager? manager;
+  final ReflectionManager manager;
 
   const EditFieldsFromMap({required this.fields, required this.instance, required this.values, required this.requiredFieldEnable, required this.manager});
 
@@ -53,7 +53,7 @@ class EditFieldsFromMap implements SyncFunctionality<void> {
         }
       }
 
-      final changeValueResult = field.changeValue(instance: instance, value: fieldValue);
+      final changeValueResult = field.changeValue(instance: instance, value: fieldValue, manager: manager);
       if (changeValueResult.itsFailure) {
         return changeValueResult.cast();
       }

@@ -2,7 +2,7 @@ import 'package:maxi_framework/maxi_framework.dart';
 import 'package:maxi_reflection/maxi_reflection.dart';
 
 abstract interface class CustomSerializer<T> {
-  bool thisObjectCanSerialize({required dynamic rawValue, ReflectionManager? manager});
+  bool thisObjectCanSerialize({required dynamic rawValue, required ReflectionManager manager});
 
-  Result<T> serialize({required dynamic value, ReflectionManager? manager});
+  Result<T> serialize({required dynamic value, required ReflectionManager manager});
 }

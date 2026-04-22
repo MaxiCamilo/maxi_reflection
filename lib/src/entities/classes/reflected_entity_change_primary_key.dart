@@ -6,10 +6,11 @@ class ReflectedEntityChangePrimaryKey implements SyncFunctionality<void> {
   final bool zeroIdentifiersAreAccepted;
 
   final ReflectedEntity entityClass;
+  final ReflectionManager manager;
   final dynamic instance;
   final dynamic idValue;
 
-  const ReflectedEntityChangePrimaryKey({required this.instance, required this.idValue, required this.entityClass, required this.identifierRequired, required this.zeroIdentifiersAreAccepted});
+  const ReflectedEntityChangePrimaryKey({required this.instance, required this.idValue, required this.entityClass, required this.identifierRequired, required this.zeroIdentifiersAreAccepted, required this.manager});
 
   @override
   Result<void> execute() {
@@ -84,7 +85,7 @@ class ReflectedEntityChangePrimaryKey implements SyncFunctionality<void> {
         );
       }
 
-      final changeResult = primaryKey.changeValue(instance: instance, value: idValue);
+      final changeResult = primaryKey.changeValue(instance: instance, value: idValue, manager: manager);
       if (changeResult.itsFailure) {
         return NegativeResult.property(
           propertyName: Oration.searchOration(

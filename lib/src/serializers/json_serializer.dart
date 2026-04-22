@@ -28,7 +28,7 @@ class JsonSerializer implements Serializer<String, String> {
         code: ErrorCode.incorrectFormat,
         message: FixedOration(message: 'Cannot convert the value to json format'),
       ),
-      function: () => json.encode(item),
+      function: () => json.encode(serializationResult.content),
     );
   }
 
@@ -50,7 +50,7 @@ class JsonSerializer implements Serializer<String, String> {
     final jsonResult = parseTextToJson(text: rawValue);
     if (jsonResult.itsFailure) return jsonResult.cast();
 
-    return reflectorResult.content.convertOrClone(rawValue: jsonResult, manager: reflectionManager).cast<T>();
+    return reflectorResult.content.convertOrClone(rawValue: jsonResult.content, manager: reflectionManager).cast<T>();
   }
 
   @override
@@ -64,7 +64,7 @@ class JsonSerializer implements Serializer<String, String> {
     if (jsonResult.itsFailure) return jsonResult.cast();
 
     if (jsonResult.content is! List) {
-      final onlyOneResult = reflectorResult.content.convertOrClone(rawValue: jsonResult.content);
+      final onlyOneResult = reflectorResult.content.convertOrClone(rawValue: jsonResult.content, manager: reflectionManager);
       if (onlyOneResult.itsCorrect) {
         return ResultValue(content: <T>[onlyOneResult.content]);
       } else {

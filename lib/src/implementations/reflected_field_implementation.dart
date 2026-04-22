@@ -43,7 +43,7 @@ abstract class ReflectedFieldImplementation<E, R> implements ReflectedField {
   }
 
   @override
-  Result obtainValue({required instance}) {
+  Result obtainValue({required instance, required ReflectionManager manager}) {
     final ifStaticResult = _checkIfStatic(instance != null);
     if (ifStaticResult.itsFailure) return ifStaticResult.cast();
 
@@ -66,7 +66,7 @@ abstract class ReflectedFieldImplementation<E, R> implements ReflectedField {
   }
 
   @override
-  Result<void> changeValue({required instance, required value}) {
+  Result<void> changeValue({required instance, required value, required ReflectionManager manager}) {
     if (readOnly) {
       return NegativeResult.property(
         propertyName: Oration.searchOration(
@@ -84,8 +84,8 @@ abstract class ReflectedFieldImplementation<E, R> implements ReflectedField {
     if (itsInstanceCorrect.itsFailure) return itsInstanceCorrect.cast();
 
     for (final anot in anotations.whereType<CustomConverter>()) {
-      if (anot.checkIfObjectCanBeConverted(rawValue: value)) {
-        final convResult = anot.convertOrClone(rawValue: value);
+      if (anot.checkIfObjectCanBeConverted(rawValue: value, manager: manager)) {
+        final convResult = anot.convertOrClone(rawValue: value, manager: manager);
         if (convResult.itsCorrect) {
           value = convResult.content;
         } else {
@@ -101,8 +101,8 @@ abstract class ReflectedFieldImplementation<E, R> implements ReflectedField {
     }
 
     if (!reflectedType.checkThatObjectIsCompatible(value: value)) {
-      if (reflectedType.checkIfObjectCanBeConverted(rawValue: value)) {
-        final convertedResult = reflectedType.convertOrClone(rawValue: value);
+      if (reflectedType.checkIfObjectCanBeConverted(rawValue: value, manager: manager)) {
+        final convertedResult = reflectedType.convertOrClone(rawValue: value, manager: manager);
         if (convertedResult.itsCorrect) {
           value = convertedResult.content;
         } else {
@@ -120,7 +120,7 @@ abstract class ReflectedFieldImplementation<E, R> implements ReflectedField {
             list: anotations,
             defaultOration: FixedOration(message: name),
           ),
-          message: FlexibleOration(message: 'The field %1 does not accept a value of type %2', textParts: [name]),
+          message: FlexibleOration(message: 'The field %1 does not accept a value of type %2', textParts: [name, value.runtimeType]),
         );
       }
     }

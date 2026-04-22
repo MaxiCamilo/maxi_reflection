@@ -82,7 +82,7 @@ abstract class ReflectedClassImplementation<T extends Object> with DisposableMix
   bool checkThatTypeIsCompatible({required Type type}) => type == T;
 
   @override
-  bool checkIfObjectCanBeConverted({required rawValue, ReflectionManager? manager}) => rawValue != null && hasDefaultValue && rawValue is Map<String, dynamic>;
+  bool checkIfObjectCanBeConverted({required rawValue, ReflectionManager? manager}) => rawValue != null && (rawValue is T || (hasDefaultValue && rawValue is Map<String, dynamic>));
 
   @override
   bool checkIfThisTypeCanBeConverted({required Type type, ReflectionManager? manager}) => hasDefaultValue && type == Map<String, dynamic>;
@@ -154,7 +154,7 @@ abstract class ReflectedClassImplementation<T extends Object> with DisposableMix
   }
 
   @override
-  Result<void> changeValue({required String name, required instance, required value}) {
+  Result<void> changeValue({required String name, required instance, required value, required ReflectionManager manager}) {
     final initStatus = initialize();
     if (initStatus.itsFailure) return initStatus.cast();
 
@@ -166,7 +166,7 @@ abstract class ReflectedClassImplementation<T extends Object> with DisposableMix
       );
     }
 
-    return foundField.changeValue(instance: instance, value: value);
+    return foundField.changeValue(instance: instance, value: value, manager: manager);
   }
 
   @override
@@ -196,9 +196,9 @@ abstract class ReflectedClassImplementation<T extends Object> with DisposableMix
     }
 
     if (rawValue is T) {
-      return _clone(value: rawValue, manager: manager);
+      return _clone(value: rawValue, manager: manager ?? this.manager);
     } else if (rawValue is Map<String, dynamic>) {
-      return _parseMapToObject(mapValue: rawValue, manager: manager);
+      return _parseMapToObject(mapValue: rawValue, manager: manager ?? this.manager);
     } else {
       return NegativeResult.controller(
         code: ErrorCode.implementationFailure,
@@ -207,30 +207,30 @@ abstract class ReflectedClassImplementation<T extends Object> with DisposableMix
     }
   }
 
-  Result<T> _clone({required T value, ReflectionManager? manager}) {
+  Result<T> _clone({required T value, required ReflectionManager manager}) {
     final newObjectResult = createNewInstance(manager: manager);
     if (newObjectResult.itsFailure) return newObjectResult.cast();
     final newObject = newObjectResult.content;
 
     for (final field in fields.where((x) => !x.readOnly)) {
-      final propValue = field.obtainValue(instance: value);
+      final propValue = field.obtainValue(instance: value, manager: manager);
       if (propValue.itsFailure) return propValue.cast();
 
-      final setResult = field.changeValue(instance: value, value: propValue.content);
+      final setResult = field.changeValue(instance: value, value: propValue.content, manager: manager);
       if (setResult.itsFailure) return setResult.cast();
     }
 
     return Result<T>.adapt(newObject);
   }
 
-  Result<T> _parseMapToObject({required Map<String, dynamic> mapValue, ReflectionManager? manager}) {
+  Result<T> _parseMapToObject({required Map<String, dynamic> mapValue, required ReflectionManager manager}) {
     final newObjectResult = createNewInstance(manager: manager);
     if (newObjectResult.itsFailure) return newObjectResult.cast();
     final newObject = newObjectResult.content;
 
     for (final field in fields.where((x) => !x.readOnly)) {
       if (mapValue.containsKey(field.name)) {
-        final setResult = field.changeValue(instance: newObject, value: mapValue[field.name]);
+        final setResult = field.changeValue(instance: newObject, value: mapValue[field.name], manager: manager);
         if (setResult.itsFailure) return setResult.cast();
       }
     }
@@ -284,7 +284,7 @@ abstract class ReflectedClassImplementation<T extends Object> with DisposableMix
   }
 
   @override
-  Result obtainValue({required String name, required instance}) {
+  Result obtainValue({required String name, required instance, required ReflectionManager manager}) {
     final initStatus = initialize();
     if (initStatus.itsFailure) return initStatus.cast();
 
@@ -296,7 +296,7 @@ abstract class ReflectedClassImplementation<T extends Object> with DisposableMix
       );
     }
 
-    return foundField.obtainValue(instance: instance);
+    return foundField.obtainValue(instance: instance, manager: manager);
   }
 
   @override
@@ -304,7 +304,7 @@ abstract class ReflectedClassImplementation<T extends Object> with DisposableMix
     final initStatus = initialize();
     if (initStatus.itsFailure) return initStatus.cast();
 
-    return SerializeClassToMap(reflectedClass: this, fields: fields, manager: manager).serialize(value: value);
+    return SerializeClassToMap(reflectedClass: this, fields: fields, manager: manager).serialize(value: value, manager: manager ?? this.manager);
   }
 
   @override

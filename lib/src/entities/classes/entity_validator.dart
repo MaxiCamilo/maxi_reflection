@@ -3,11 +3,12 @@ import 'package:maxi_reflection/maxi_reflection.dart';
 
 class EntityValidator implements Validator {
   final ReflectedClass classReflector;
+  final ReflectionManager manager;
 
   late final List<Validator> _ownValidators;
   late final Map<ReflectedField, List<Validator>> _fieldValidators;
 
-  EntityValidator({required this.classReflector}) {
+  EntityValidator({required this.classReflector, required this.manager}) {
     _ownValidators = classReflector.anotations.whereType<Validator>().toList(growable: false);
     _fieldValidators = <ReflectedField, List<Validator>>{};
 
@@ -41,7 +42,7 @@ class EntityValidator implements Validator {
       final prop = part.key;
       final validators = part.value;
 
-      final propValueResult = prop.obtainValue(instance: value);
+      final propValueResult = prop.obtainValue(instance: value, manager: manager);
       if (propValueResult.itsFailure) return propValueResult.cast();
       final propValue = propValueResult.content;
 
