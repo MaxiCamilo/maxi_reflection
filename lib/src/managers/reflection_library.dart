@@ -62,6 +62,11 @@ class ReflectionLibrary with DisposableMixin, InitializableMixin implements Refl
     final newEntityEngine = hasClass.buildEntityReflector(manager: this);
     if (newEntityEngine.itsFailure) return newEntityEngine.cast();
 
+    if (newEntityEngine.content is Initializable) {
+      final initStatus = (newEntityEngine.content as Initializable).initialize();
+      if (initStatus.itsFailure) return initStatus.cast();
+    }
+
     _entityReflectors.add(newEntityEngine.content);
     return newEntityEngine;
   }
