@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:maxi_framework/maxi_framework.dart';
 import 'package:maxi_reflection/maxi_reflection.dart';
+import 'package:maxi_reflection/src/serializers/second_oportunity/try_serialize_unkown_object.dart';
 
 class JsonSerializer implements Serializer<String, String> {
   final ReflectionManager reflectionManager;
@@ -20,15 +21,24 @@ class JsonSerializer implements Serializer<String, String> {
     final reflectorResult = GetDynamicReflectorByType(dartType: item.runtimeType, reflectionManager: reflectionManager).execute();
     if (reflectorResult.itsFailure) return reflectorResult.cast();
 
-    final serializationResult = reflectorResult.content.serialize(value: item, manager: reflectionManager);
-    if (serializationResult.itsFailure) return serializationResult.cast();
+    late final dynamic rawContent;
+
+    if (reflectorResult.content.reflectionMode == ReflectedTypeMode.unkown) {
+      final secondOportunityResult = TrySerializeUnkownObject(reflectionManager: reflectionManager, rawValue: item).execute();
+      if (secondOportunityResult.itsFailure) return secondOportunityResult.cast();
+      rawContent = secondOportunityResult.content;
+    } else {
+      final serializationResult = reflectorResult.content.serialize(value: item, manager: reflectionManager);
+      if (serializationResult.itsFailure) return serializationResult.cast();
+      rawContent = serializationResult.content;
+    }
 
     return volatileFunction(
       error: (ex, st) => NegativeResult.controller(
         code: ErrorCode.incorrectFormat,
         message: FixedOration(message: 'Cannot convert the value to json format'),
       ),
-      function: () => json.encode(serializationResult.content),
+      function: () => json.encode(rawContent),
     );
   }
 

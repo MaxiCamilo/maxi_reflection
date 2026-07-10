@@ -1,5 +1,6 @@
 import 'package:maxi_framework/maxi_framework.dart';
 import 'package:maxi_reflection/maxi_reflection.dart';
+import 'package:maxi_reflection/src/serializers/second_oportunity/try_serialize_unkown_object.dart';
 
 class SerializeClassToMap implements CustomSerializer<Map<String, dynamic>> {
   final ReflectedClass reflectedClass;
@@ -51,13 +52,18 @@ class SerializeClassToMap implements CustomSerializer<Map<String, dynamic>> {
         if (currentSerializationResult.itsCorrect) {
           serializeValue = currentSerializationResult.content;
         } else {
-          return NegativeResult.property(
-            propertyName: Oration.searchOration(
-              list: field.anotations,
-              defaultOration: FixedOration(message: field.name),
-            ),
-            message: currentSerializationResult.error.message,
-          );
+          final trySerializeResult = TrySerializeUnkownObject(reflectionManager: manager, rawValue: fieldValueResult.content).execute();
+          if (trySerializeResult.itsCorrect) {
+            serializeValue = trySerializeResult.content;
+          } else {
+            return NegativeResult.property(
+              propertyName: Oration.searchOration(
+                list: field.anotations,
+                defaultOration: FixedOration(message: field.name),
+              ),
+              message: currentSerializationResult.error.message,
+            );
+          }
         }
       }
 
