@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:maxi_framework/maxi_framework.dart';
 import 'package:maxi_reflection/maxi_reflection.dart';
 
@@ -32,10 +34,10 @@ class ReflectedTypedList<T> implements ReflectedType {
   bool checkThatObjectIsCompatible({required value}) => value is List<T>;
 
   @override
-  bool checkIfObjectCanBeConverted({required rawValue, ReflectionManager? manager}) => rawValue is List<T> || rawValue is T || rawValue is Iterable;
+  bool checkIfObjectCanBeConverted({required rawValue, ReflectionManager? manager}) => rawValue is List<T> || rawValue is T || rawValue is Iterable || rawValue is String;
 
   @override
-  bool checkIfThisTypeCanBeConverted({required Type type, ReflectionManager? manager}) => type == (List<T>) || type == T || type == List || (type == Iterable<T>) || (type == Iterable);
+  bool checkIfThisTypeCanBeConverted({required Type type, ReflectionManager? manager}) => type == (List<T>) || type == T || type == List || (type == Iterable<T>) || (type == Iterable) || (type == String);
 
   @override
   Result convertOrClone({required rawValue, ReflectionManager? manager}) {
@@ -52,6 +54,14 @@ class ReflectedTypedList<T> implements ReflectedType {
       final itemResult = _cloneItem(actualReflector: null, item: rawValue, manager: manager);
       if (itemResult.itsFailure) return itemResult.cast();
       return ResultValue(content: [itemResult.content.$2]);
+    } else if (rawValue is String) {
+      final jsonResult = tryFunction(FlexibleOration(message: 'Cannot convert json string to a list of type %1', textParts: [T]), () => json.decode(rawValue));
+      if (jsonResult.itsFailure) return jsonResult.cast();
+      if (jsonResult.content is Iterable) {
+        return _cloneList(oldList: jsonResult.content, manager: manager);
+      } else {
+        return _cloneList(oldList: [jsonResult.content], manager: manager);
+      }
     } else {
       return NegativeResult.controller(
         code: ErrorCode.nullValue,

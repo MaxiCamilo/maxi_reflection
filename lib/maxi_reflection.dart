@@ -6,3 +6,5 @@ export 'src/types.dart';
 export 'src/managers.dart';
 export 'src/utils.dart';
 export 'src/serializers.dart';
+export 'src/tools.dart';
+export 'src/extensions.dart';
