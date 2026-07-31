@@ -11,5 +11,3 @@ export 'package:maxi_reflection/src/logic/get_local_reflector.dart';
 export 'package:maxi_reflection/src/logic/get_local_reflector_by_name.dart';
 export 'package:maxi_reflection/src/logic/get_primitive_reflector.dart';
 export 'package:maxi_reflection/src/logic/get_primitive_reflector_by_name.dart';
-export 'package:maxi_reflection/src/logic/get_dynamic_reflector_by_type.dart';
-export 'package:maxi_reflection/src/logic/get_dynamic_reflector_by_name.dart';
